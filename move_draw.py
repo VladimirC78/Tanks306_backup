@@ -71,29 +71,47 @@ def motion_down(obj, walls):
         obj.r[1] += obj.v * np.cos(obj.ang)
 
 
-def tank_move(obj, walls):
-    keys = pygame.key.get_pressed()
+def move_tank(obj):
+    if obj.moving_front:
+        obj.v = [-1.5 * np.sin(obj.ang), -1.5 * np.cos(obj.ang)]
+    elif obj.moving_back:
+        obj.v = [1.5 * np.sin(obj.ang), 1.5 * np.cos(obj.ang)]
 
-    if obj.type == 1:
-        if keys[pygame.K_w]:
-            motion_up(obj, walls)
-        elif keys[pygame.K_s]:
-            motion_down(obj, walls)
+    if obj.turning_left:
+        obj.ang += obj.omega
+    if obj.turning_right:
+        obj.ang -= obj.omega
 
-        if keys[pygame.K_a]:
-            obj.ang += obj.omega
-        elif keys[pygame.K_d]:
-            obj.ang -= obj.omega
-    else:
-        if keys[pygame.K_UP]:
-            motion_up(obj, walls)
-        elif keys[pygame.K_DOWN]:
-            motion_down(obj, walls)
+    if not obj.moving_front and not obj.moving_back:
+        obj.v = [0, 0]
 
-        if keys[pygame.K_LEFT]:
-            obj.ang += obj.omega
-        elif keys[pygame.K_RIGHT]:
-            obj.ang -= obj.omega
+    obj.r[0] += obj.v[0]
+    obj.r[1] += obj.v[1]
+
+
+# def tank_move(obj, walls):
+#     keys = pygame.key.get_pressed()
+#
+#     if obj.type == 1:
+#         if keys[pygame.K_w]:
+#             motion_up(obj, walls)
+#         elif keys[pygame.K_s]:
+#             motion_down(obj, walls)
+#
+#         if keys[pygame.K_a]:
+#             obj.ang += obj.omega
+#         elif keys[pygame.K_d]:
+#             obj.ang -= obj.omega
+#     else:
+#         if keys[pygame.K_UP]:
+#             motion_up(obj, walls)
+#         elif keys[pygame.K_DOWN]:
+#             motion_down(obj, walls)
+#
+#         if keys[pygame.K_LEFT]:
+#             obj.ang += obj.omega
+#         elif keys[pygame.K_RIGHT]:
+#             obj.ang -= obj.omega
 
 
 """Итог работы: пришлось писать для танка свой словарь столкновений: если он контачит, например, слева, хоть с одной стеной,

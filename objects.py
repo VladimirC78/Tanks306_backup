@@ -9,31 +9,35 @@ def rot_center(image, rect, angle):
 
 
 class Tank:
-    def __init__(self, x, y, omega, scale, type):
+    def __init__(self, x, y, scale, type):
         self.type = type
         self.r = list([x, y])  # Координаты танка по осям х и у
         self.scale = scale  # Характерный размер танка
-        self.v = 1  # Модуль скорости
+        self.v = [0, 0]  # Вектор скорости
+        self.omega = 0.02
         self.ang = 0  # Изначально танк направлен вправо, угол в радианах и отсчитывается по часовой стрелке
-        self.omega = omega  # потом подберем
         self.charges = 5
         self.tank_hit_walls = {'u': False, 'd': False, 'r': False, 'l': False}
         self.live = 1  # жизнь танка
         self.rect = pygame.Rect(self.r[0] - self.scale * 0.5, self.r[1] - self.scale * 0.5, self.scale, self.scale)
+        self.moving_front = False
+        self.moving_back = False
+        self.turning_left = False
+        self.turning_right = False
 
-    def tank_check_hit(self, walls):
-        l, r, u, d = False, False, False, False
-        for wall in walls:
-            if wall.wall_hit(self)["l"]:
-                l = True
-            if wall.wall_hit(self)["r"]:
-                r = True
-            if wall.wall_hit(self)["u"]:
-                u = True
-            if wall.wall_hit(self)["d"]:
-                d = True
-        self.tank_hit_walls = {'u': u, 'd': d, 'r': r, 'l': l}
-        return self.tank_hit_walls
+    # def tank_check_hit(self, walls):
+    #     l, r, u, d = False, False, False, False
+    #     for wall in walls:
+    #         if wall.wall_hit(self)["l"]:
+    #             l = True
+    #         if wall.wall_hit(self)["r"]:
+    #             r = True
+    #         if wall.wall_hit(self)["u"]:
+    #             u = True
+    #         if wall.wall_hit(self)["d"]:
+    #             d = True
+    #     self.tank_hit_walls = {'u': u, 'd': d, 'r': r, 'l': l}
+    #     return self.tank_hit_walls
 
         # Количество выстрелов у танка, перезаряжается со временем
 

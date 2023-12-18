@@ -2,7 +2,7 @@ import pygame
 import sys
 from load_hitbox import *
 import objects
-from move_draw import tank_move, bullet_move
+from move_draw import move_tank, bullet_move
 
 """Нужно будет загрузить картинки и звуки в папку проекта, image path  и ему подобные - переменные, в которые 
 мы записываем путь на звуки и картинки(если загрузим в проект, то вместо полного пути можно будет использовать просто имя,
@@ -12,7 +12,8 @@ from move_draw import tank_move, bullet_move
  """
 screen_width = 800
 screen_height = 600
-
+FPS = 60
+v = 2
 pygame.init()
 all_sprites = pygame.sprite.Group()
 clock = pygame.time.Clock()
@@ -122,10 +123,10 @@ def main():
                     pygame.draw.rect(screen, (0, 0, 0), (block_size * j, block_size * i, block_size, block_size))
                 if field[i][j] == 2:
                     if not flag:
-                        tanks.append(objects.Tank(block_size * j, block_size * i, 0.01, block_size, 1))
+                        tanks.append(objects.Tank(block_size * j, block_size * i, block_size, 1))
                         flag = True
                     else:
-                        tanks.append(objects.Tank(block_size * j, block_size * i, 0.01, block_size, 2))
+                        tanks.append(objects.Tank(block_size * j, block_size * i, block_size, 2))
         while not level_finished:
             pygame.display.update()
             screen.fill((255, 255, 255))
@@ -137,21 +138,57 @@ def main():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
-                if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-                    r_center = [tanks[1].r[0] + 0.65 * tanks[1].scale * np.sin(-tanks[1].ang),
-                                tanks[1].r[1] - 0.65 * tanks[1].scale * np.cos(-tanks[1].ang)]
-                    bullets2.append(
-                        objects.Bullet(r_center[0], r_center[1], [-2 * np.sin(tanks[1].ang), -2 * np.cos(tanks[1].ang)],
-                                       5))
-                if event.type == pygame.KEYDOWN and event.key == pygame.K_q:
-                    r_center = [tanks[0].r[0] + 0.65 * tanks[0].scale * np.sin(-tanks[0].ang),
-                                tanks[0].r[1] - 0.65 * tanks[0].scale * np.cos(-tanks[0].ang)]
-                    bullets1.append(
-                        objects.Bullet(r_center[0], r_center[1], [-2 * np.sin(tanks[0].ang), -2 * np.cos(tanks[0].ang)],
-                                       5))
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE:
+                        r_center = [tanks[1].r[0] + 0.65 * tanks[1].scale * np.sin(-tanks[1].ang),
+                                    tanks[1].r[1] - 0.65 * tanks[1].scale * np.cos(-tanks[1].ang)]
+                        bullets2.append(
+                            objects.Bullet(r_center[0], r_center[1],
+                                           [-3 * np.sin(tanks[1].ang), -3 * np.cos(tanks[1].ang)],
+                                           5))
+                    if event.key == pygame.K_q:
+                        r_center = [tanks[0].r[0] + 0.65 * tanks[0].scale * np.sin(-tanks[0].ang),
+                                    tanks[0].r[1] - 0.65 * tanks[0].scale * np.cos(-tanks[0].ang)]
+                        bullets1.append(
+                            objects.Bullet(r_center[0], r_center[1],
+                                           [-3 * np.sin(tanks[0].ang), -3 * np.cos(tanks[0].ang)],
+                                           5))
+                    if event.key == pygame.K_w:
+                        tanks[0].moving_front = True
+                    if event.key == pygame.K_s:
+                        tanks[0].moving_back = True
+                    if event.key == pygame.K_a:
+                        tanks[0].turning_left = True
+                    if event.key == pygame.K_d:
+                        tanks[0].turning_right = True
+                if event.type == pygame.KEYUP:
+                    if event.key == pygame.K_w or event.key == pygame.K_s:
+                        tanks[0].moving_front = False
+                        tanks[0].moving_back = False
+                    if event.key == pygame.K_a or event.key == pygame.K_d:
+                        tanks[0].turning_right = False
+                        tanks[0].turning_left = False
+
             for t in tanks:
                 t.rect = t.draw(screen)
-                tank_move(t, walls)
+                for w in walls:
+                    if w.wall_hit(t)['l']:
+                        if np.sin(t.ang) > 0:
+                            t.v[0] = 0
+                            t.r[0] = w.r[0] - (w.block_size + t.scale) * 0.6
+                    if w.wall_hit(t)['r']:
+                        if np.sin(t.ang) < 0:
+                            t.v[0] = 0
+                            t.r[0] = w.r[0] + (w.block_size + t.scale) * 0.6
+                    if w.wall_hit(t)['u']:
+                        if np.cos(t.ang) > 0:
+                            t.v[1] = 0
+                            t.r[1] = w.r[1] - (w.block_size + t.scale) * 0.6
+                    if w.wall_hit(t)['d']:
+                        if np.cos(t.ang) < 0:
+                            t.v[1] = 0
+                            t.r[1] = w.r[1] + (w.block_size + t.scale) * 0.6
+                move_tank(t)
 
             for b in bullets1:
                 b.draw(screen)
@@ -168,6 +205,7 @@ def main():
                     bullets2.remove(b)
                 if check_hit(tanks[0], b):
                     print("Есть пробитие")
+            clock.tick(FPS)
 
 
 if __name__ == "__main__":
