@@ -156,12 +156,16 @@ def main():
             for b in bullets1:
                 b.draw(screen)
                 bullet_move(b, walls)
+                if b.life < 0:
+                    bullets1.remove(b)
                 if check_hit(tanks[1], b):
                     print("Есть пробитие")
 
             for b in bullets2:
                 b.draw(screen)
                 bullet_move(b, walls)
+                if b.life < 0:
+                    bullets2.remove(b)
                 if check_hit(tanks[0], b):
                     print("Есть пробитие")
 

@@ -50,6 +50,7 @@ class Bullet:
         self.r = list([x, y])  # Координаты танка по осям х и у
         self.scale = scale  # Радиус пули
         self.v = v  # Двумерный вектор со скоростями по осям
+        self.life = 2
 
     def draw(self, screen):
         pygame.draw.circle(screen, (255, 0, 0), (self.r[0], self.r[1]), self.scale)

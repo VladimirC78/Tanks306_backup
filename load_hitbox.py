@@ -9,72 +9,6 @@ import pygame
 map_number = len(Levels_encoded.fields)
 
 
-def distance_between_segments(x1, y1, x2, y2, x3, y3, x4, y4):
-    def ras(x1, y1, x2, y2, x3, y3):
-        # Если отрезок вертикальный - меняем местами координаты каждой точки.
-        if x1 == x2:
-            x1, y1 = y1, x1
-            x2, y2 = y2, x2
-            x3, y3 = y3, x3
-        k = (y1 - y2) / (x1 - x2)  # Ищем коэффициенты уравнения прямой, которому принадлежит данный отрезок.
-        d = y1 - k * x1
-        xz = (x3 * x2 - x3 * x1 + y2 * y3 - y1 * y3 + y1 * d - y2 * d) / (k * y2 - k * y1 + x2 - x1)
-        dl = -1
-        if (x2 >= xz >= x1) or (x1 >= xz >= x2):
-            dl = math.sqrt((x3 - xz) * (x3 - xz) + (y3 - xz * k - d) * (
-                    y3 - xz * k - d))  # Проверим лежит ли основание высоты на отрезке.
-        return dl
-
-    # Вводим параметры отрезков
-    # xa, ya, xb, yb = [1, 1, 2, 2]
-    # xc, yc, xd, yd = [2, 1, 3, 0]
-
-    xa, ya, xb, yb = x1, y1, x2, y2
-    xc, yc, xd, yd = x3, y3, x4, y4
-
-    min = -1
-    t = -2
-    s = -2
-
-    o = (xb - xa) * (-yd + yc) - (yb - ya) * (-xd + xc)
-    o1 = (xb - xa) * (yc - ya) - (yb - ya) * (xc - xa)
-    o2 = (-yd + yc) * (xc - xa) - (-xd + xc) * (yc - ya)
-
-    if o != 0:
-        t = o1 / o
-        s = o2 / o
-
-    if (t >= 0 and s >= 0) and (t <= 1 and s <= 1):
-        min = 0  # Проверим пересекаются ли отрезки.
-    else:
-        # Найдём наименьшую высоту опущенную из конца одного отрезка на другой.
-        dl1 = ras(xa, ya, xb, yb, xc, yc)
-        min = dl1
-        dl2 = ras(xa, ya, xb, yb, xd, yd)
-        if (dl2 < min and dl2 != -1) or min == -1:
-            min = dl2
-        dl3 = ras(xc, yc, xd, yd, xa, ya)
-        if (dl3 < min and dl3 != -1) or min == -1:
-            min = dl3
-        dl4 = ras(xc, yc, xd, yd, xb, yb)
-        if (dl4 < min and dl4 != -1) or min == -1:
-            min = dl4
-        if min == -1:
-            # В случае, если невозможно опустить высоту найдём минимальное расстояние между точками.
-            dl1 = math.sqrt((xa - xc) * (xa - xc) + (ya - yc) * (ya - yc))
-            min = dl1
-            dl2 = math.sqrt((xb - xd) * (xb - xd) + (yb - yd) * (yb - yd))
-            if dl2 < min:
-                min = dl2
-            dl3 = math.sqrt((xb - xc) * (xb - xc) + (yb - yc) * (yb - yc))
-            if dl3 < min:
-                min = dl3
-            dl4 = math.sqrt((xa - xd) * (xa - xd) + (ya - yd) * (ya - yd))
-            if dl4 < min:
-                min = dl4
-
-    return min
-
 
 def calculate_distance(place1, place2):
     # Рассчитывает расстояние между двумя объектами, например, между танком и стеной
@@ -100,27 +34,6 @@ def segment_distance(x, y, x1, y1, x2, y2):  # Рассчитывает расс
         else:
             return abs(x - x1)
 
-
-def bullet_hittest(obj1, obj2):  # Проверка попадания пули в танк, здесь obj1 - пуля, obj2 - танк
-    # Координаты каждой из вершин танка
-    r_a = [obj2.r[0] + 0.5 * obj2.scale * np.cos(np.pi / 4 - obj2.ang),
-           obj2.r[1] - 0.5 * obj2.scale * np.sin(np.pi / 4 - obj2.ang)]
-    r_c = [obj2.r[0] - 0.5 * obj2.scale * np.cos(np.pi / 4 - obj2.ang),
-           obj2.r[1] + 0.5 * obj2.scale * np.sin(np.pi / 4 - obj2.ang)]
-    r_b = [obj2.r[0] + 0.5 * obj2.scale * np.cos(np.pi / 4 + obj2.ang),
-           obj2.r[1] + 0.5 * obj2.scale * np.sin(np.pi / 4 + obj2.ang)]
-    r_d = [obj2.r[0] - 0.5 * obj2.scale * np.cos(np.pi / 4 + obj2.ang),
-           obj2.r[1] - 0.5 * obj2.scale * np.sin(np.pi / 4 + obj2.ang)]
-
-    dist_ab = segment_distance(obj1.r[0], obj1.r[1], r_a[0], r_a[1], r_b[0], r_b[1])
-    dist_bc = segment_distance(obj1.r[0], obj1.r[1], r_b[0], r_b[1], r_c[0], r_c[1])
-    dist_cd = segment_distance(obj1.r[0], obj1.r[1], r_c[0], r_c[1], r_d[0], r_d[1])
-    dist_da = segment_distance(obj1.r[0], obj1.r[1], r_d[0], r_d[1], r_a[0], r_a[1])
-
-    if dist_ab <= obj1.scale or dist_bc <= obj1.scale or dist_cd <= obj1.scale or dist_da <= obj1.scale:
-        return True
-    else:
-        return False
 
 
 def create_walls(field, block_size):
@@ -165,14 +78,18 @@ class Wall:
         # в move_draw для изменения скорости танка или пули
         self.hit_dict = {'u': False, 'd': False, 'r': False, 'l': False}
         dist = calculate_distance(obj.r, self.r)
+        top_rect = pygame.Rect(self.rect.topleft[0], self.rect.topleft[1] - obj.scale, self.block_size, obj.scale)
+        bot_rect = pygame.Rect(self.rect.topleft[0], self.rect.topleft[1] + self.block_size, self.block_size, obj.scale)
+        left_rect = pygame.Rect(self.rect.topleft[0] - obj.scale, self.rect.topleft[1], obj.scale, self.block_size)
+        right_rect = pygame.Rect(self.rect.topleft[0] + self.block_size, self.rect.topleft[1], 10, self.block_size)
         if isinstance(obj, objects.Bullet):
-            if dist[0] < 0 and abs(dist[0]) <= obj.scale:
+            if left_rect.collidepoint(obj.r):
                 self.hit_dict['l'] = True
-            if dist[0] > 0 and abs(dist[0]) <= self.block_size + obj.scale:
+            if right_rect.collidepoint(obj.r):
                 self.hit_dict['r'] = True
-            if dist[1] < 0 and abs(dist[1]) <= obj.scale:
+            if top_rect.collidepoint(obj.r):
                 self.hit_dict['u'] = True
-            if dist[1] > 0 and abs(dist[1]) <= self.block_size + obj.scale:
+            if bot_rect.collidepoint(obj.r):
                 self.hit_dict['d'] = True
         elif isinstance(obj, objects.Tank):
             if pygame.Rect.colliderect(self.rect, obj.rect):
