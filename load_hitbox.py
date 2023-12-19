@@ -77,12 +77,12 @@ class Wall:
         # Возвращает словарь, указывающий с какой стороны произошло столкновение, нужно использовать
         # в move_draw для изменения скорости танка или пули
         self.hit_dict = {'u': False, 'd': False, 'r': False, 'l': False}
-        dist = calculate_distance(obj.r, self.r)
-        top_rect = pygame.Rect(self.rect.topleft[0], self.rect.topleft[1] - obj.scale, self.block_size, obj.scale)
-        bot_rect = pygame.Rect(self.rect.topleft[0], self.rect.topleft[1] + self.block_size, self.block_size, obj.scale)
-        left_rect = pygame.Rect(self.rect.topleft[0] - obj.scale, self.rect.topleft[1], obj.scale, self.block_size)
-        right_rect = pygame.Rect(self.rect.topleft[0] + self.block_size, self.rect.topleft[1], 10, self.block_size)
         if isinstance(obj, objects.Bullet):
+            top_rect = pygame.Rect(self.rect.topleft[0], self.rect.topleft[1] - obj.scale, self.block_size, obj.scale)
+            bot_rect = pygame.Rect(self.rect.topleft[0], self.rect.topleft[1] + self.block_size, self.block_size,
+                                   obj.scale)
+            left_rect = pygame.Rect(self.rect.topleft[0] - obj.scale, self.rect.topleft[1], obj.scale, self.block_size)
+            right_rect = pygame.Rect(self.rect.topleft[0] + self.block_size, self.rect.topleft[1], 10, self.block_size)
             if left_rect.collidepoint(obj.r):
                 self.hit_dict['l'] = True
             if right_rect.collidepoint(obj.r):
@@ -92,16 +92,29 @@ class Wall:
             if bot_rect.collidepoint(obj.r):
                 self.hit_dict['d'] = True
         elif isinstance(obj, objects.Tank):
-            if pygame.Rect.colliderect(self.rect, obj.rect):
-                if 0 < dist[0] <= (self.block_size + obj.scale) * 0.5:
-                    self.hit_dict['r'] = True
-                if dist[0] < 0 and abs(dist[0]) <= (self.block_size + obj.scale) * 0.5:
-                    self.hit_dict['l'] = True
-                if dist[1] < 0 and abs(dist[1]) <= (self.block_size + obj.scale) * 0.5:
-                    self.hit_dict['u'] = True
-                if 0 < dist[1] <= (self.block_size + obj.scale) * 0.5:
-                    self.hit_dict['d'] = True
-                print(self.hit_dict, self.r, obj.r, dist)
+            wall_top_rect = pygame.Rect(self.rect.topleft[0], self.rect.topleft[1] - 1, self.block_size, 1)
+            wall_bot_rect = pygame.Rect(self.rect.bottomleft[0], self.rect.bottomleft[1], self.block_size, 1)
+            wall_left_rect = pygame.Rect(self.rect.topleft[0] - 1, self.rect.topleft[1], 1, self.block_size)
+            wall_right_rect = pygame.Rect(self.rect.topright[0], self.rect.topright[1], 1, self.block_size)
+            if obj.moving_back:
+                tank_top_rect = pygame.Rect(obj.rect.topleft[0], obj.rect.topleft[1] - 5, obj.scale, 10)
+                tank_bot_rect = pygame.Rect(obj.rect.topleft[0], obj.rect.bottomleft[1] - 5, obj.scale, 10)
+                tank_left_rect = pygame.Rect(obj.rect.topleft[0] - 5, obj.rect.topleft[1], 10, obj.scale)
+                tank_right_rect = pygame.Rect(obj.rect.topright[0] - 5, obj.rect.topright[1], 10, obj.scale)
+            else:
+                tank_top_rect = pygame.Rect(obj.rect.topleft[0], obj.rect.topleft[1], obj.scale, 1)
+                tank_bot_rect = pygame.Rect(obj.rect.topleft[0], obj.rect.bottomleft[1] - 1, obj.scale, 1)
+                tank_left_rect = pygame.Rect(obj.rect.topleft[0], obj.rect.topleft[1], 1, obj.scale)
+                tank_right_rect = pygame.Rect(obj.rect.topright[0] - 1, obj.rect.topright[1], 1, obj.scale)
+
+            if wall_top_rect.colliderect(tank_bot_rect):
+                self.hit_dict['u'] = True
+            if wall_bot_rect.colliderect(tank_top_rect):
+                self.hit_dict['d'] = True
+            if wall_right_rect.colliderect(tank_left_rect):
+                self.hit_dict['r'] = True
+            if wall_left_rect.colliderect(tank_right_rect):
+                self.hit_dict['l'] = True
         return self.hit_dict
 
 

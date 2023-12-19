@@ -171,24 +171,58 @@ def main():
 
             for t in tanks:
                 t.rect = t.draw(screen)
+                vx = 0.5
+                vy = 0.5
                 for w in walls:
                     if w.wall_hit(t)['l']:
-                        if np.sin(t.ang) > 0:
-                            t.v[0] = 0
-                            t.r[0] = w.r[0] - (w.block_size + t.scale) * 0.6
+                        if t.moving_front:
+                            if np.sin(t.ang) < 0:
+                                vx = 0
+                                if t.r[0] >= w.r[0] - (w.block_size + t.scale) * 0.4:
+                                    t.r[0] = w.r[0] - (w.block_size + t.scale) * 0.4
+                        if t.moving_back:
+                            if np.sin(t.ang) > 0:
+                                vx = 0
+                                if t.r[0] >= w.r[0] - (w.block_size + t.scale) * 0.4:
+                                    t.r[0] = w.r[0] - (w.block_size + t.scale) * 0.4
+                                print(w.wall_hit(t))
                     if w.wall_hit(t)['r']:
-                        if np.sin(t.ang) < 0:
-                            t.v[0] = 0
-                            t.r[0] = w.r[0] + (w.block_size + t.scale) * 0.6
+                        if t.moving_front:
+                            if np.sin(t.ang) > 0:
+                                vx = 0
+                                if t.r[0] <= w.r[0] + (w.block_size + t.scale) * 0.4:
+                                    t.r[0] = w.r[0] + (w.block_size + t.scale) * 0.4
+                        if t.moving_back:
+                            if np.sin(t.ang) < 0:
+                                vx = 0
+                                if t.r[0] <= w.r[0] + (w.block_size + t.scale) * 0.4:
+                                    t.r[0] = w.r[0] + (w.block_size + t.scale) * 0.4
+                                print(w.wall_hit(t))
                     if w.wall_hit(t)['u']:
-                        if np.cos(t.ang) > 0:
-                            t.v[1] = 0
-                            t.r[1] = w.r[1] - (w.block_size + t.scale) * 0.6
+                        if t.moving_front:
+                            if np.cos(t.ang) < 0:
+                                vy = 0
+                                if t.r[1] >= w.r[1] - (w.block_size + t.scale) * 0.4:
+                                    t.r[1] = w.r[1] - (w.block_size + t.scale) * 0.4
+                        if t.moving_back:
+                            if np.cos(t.ang) > 0:
+                                vy = 0
+                                if t.r[1] >= w.r[1] - (w.block_size + t.scale) * 0.4:
+                                    t.r[1] = w.r[1] - (w.block_size + t.scale) * 0.4
+                                print(w.wall_hit(t))
                     if w.wall_hit(t)['d']:
-                        if np.cos(t.ang) < 0:
-                            t.v[1] = 0
-                            t.r[1] = w.r[1] + (w.block_size + t.scale) * 0.6
-                move_tank(t)
+                        if t.moving_front:
+                            if np.cos(t.ang) > 0:
+                                vy = 0
+                                if t.r[1] <= w.r[1] + (w.block_size + t.scale) * 0.4:
+                                    t.r[1] = w.r[1] + (w.block_size + t.scale) * 0.4
+                        if t.moving_back:
+                            if np.cos(t.ang) < 0:
+                                vy = 0
+                                if t.r[1] <= w.r[1] + (w.block_size + t.scale) * 0.4:
+                                    t.r[1] = w.r[1] + (w.block_size + t.scale) * 0.4
+                                print(w.wall_hit(t))
+                move_tank(t, vx, vy)
 
             for b in bullets1:
                 b.draw(screen)
@@ -205,7 +239,7 @@ def main():
                     bullets2.remove(b)
                 if check_hit(tanks[0], b):
                     print("Есть пробитие")
-            clock.tick(FPS)
+            # clock.tick(FPS)
 
 
 if __name__ == "__main__":

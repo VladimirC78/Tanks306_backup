@@ -29,53 +29,53 @@ def bullet_move(obj, walls):
        как игра сможет запуститься """
 
 
-def motion_up(obj,
-              walls):  # движение вверх с учетом столкновения танка со стенами в карте(у танка теперь есть свой словарь)
-    if obj.tank_check_hit(walls)["l"]:
-        if np.sin(obj.ang) <= 0:
-            obj.r[0] -= obj.v * np.sin(obj.ang)
-    if obj.tank_check_hit(walls)["r"]:
-        if np.sin(obj.ang) >= 0:
-            obj.r[0] -= obj.v * np.sin(obj.ang)
-    if (obj.tank_check_hit(walls)["r"] == obj.tank_check_hit(walls)["l"]) and obj.tank_check_hit(walls)["r"] == False:
-        obj.r[0] -= obj.v * np.sin(obj.ang)
-    if obj.tank_check_hit(walls)["u"]:
-        if np.cos(obj.ang) <= 0:
-            obj.r[1] -= obj.v * np.cos(obj.ang)
-    if obj.tank_check_hit(walls)["d"]:
-        if np.cos(obj.ang) >= 0:
-            obj.r[1] -= obj.v * np.cos(obj.ang)
-    if (obj.tank_check_hit(walls)["u"] == obj.tank_check_hit(walls)["d"]) and obj.tank_check_hit(walls)["d"] == False:
-        obj.r[1] -= obj.v * np.cos(obj.ang)
+# def motion_up(obj,
+#               walls):  # движение вверх с учетом столкновения танка со стенами в карте(у танка теперь есть свой словарь)
+#     if obj.tank_check_hit(walls)["l"]:
+#         if np.sin(obj.ang) <= 0:
+#             obj.r[0] -= obj.v * np.sin(obj.ang)
+#     if obj.tank_check_hit(walls)["r"]:
+#         if np.sin(obj.ang) >= 0:
+#             obj.r[0] -= obj.v * np.sin(obj.ang)
+#     if (obj.tank_check_hit(walls)["r"] == obj.tank_check_hit(walls)["l"]) and obj.tank_check_hit(walls)["r"] == False:
+#         obj.r[0] -= obj.v * np.sin(obj.ang)
+#     if obj.tank_check_hit(walls)["u"]:
+#         if np.cos(obj.ang) <= 0:
+#             obj.r[1] -= obj.v * np.cos(obj.ang)
+#     if obj.tank_check_hit(walls)["d"]:
+#         if np.cos(obj.ang) >= 0:
+#             obj.r[1] -= obj.v * np.cos(obj.ang)
+#     if (obj.tank_check_hit(walls)["u"] == obj.tank_check_hit(walls)["d"]) and obj.tank_check_hit(walls)["d"] == False:
+#         obj.r[1] -= obj.v * np.cos(obj.ang)
 
 
-def motion_down(obj, walls):
-    if obj.tank_check_hit(walls)["l"]:
-        if np.sin(obj.ang) >= 0:
-            obj.r[0] += obj.v * np.sin(obj.ang)
-    if obj.tank_check_hit(walls)["r"]:
-        if np.sin(obj.ang) <= 0:
-            obj.r[0] += obj.v * np.sin(obj.ang)
-    if (obj.tank_check_hit(walls)["r"] == obj.tank_check_hit(walls)["l"]) and not obj.tank_check_hit(walls)[
-        "r"]:
-        obj.r[0] += obj.v * np.sin(obj.ang)
+# def motion_down(obj, walls):
+#     if obj.tank_check_hit(walls)["l"]:
+#         if np.sin(obj.ang) >= 0:
+#             obj.r[0] += obj.v * np.sin(obj.ang)
+#     if obj.tank_check_hit(walls)["r"]:
+#         if np.sin(obj.ang) <= 0:
+#             obj.r[0] += obj.v * np.sin(obj.ang)
+#     if (obj.tank_check_hit(walls)["r"] == obj.tank_check_hit(walls)["l"]) and not obj.tank_check_hit(walls)[
+#         "r"]:
+#         obj.r[0] += obj.v * np.sin(obj.ang)
+#
+#     if obj.tank_check_hit(walls)["u"]:
+#         if np.cos(obj.ang) >= 0:
+#             obj.r[1] += obj.v * np.cos(obj.ang)
+#     if obj.tank_check_hit(walls)["d"]:
+#         if np.cos(obj.ang) <= 0:
+#             obj.r[1] += obj.v * np.cos(obj.ang)
+#     if (obj.tank_check_hit(walls)["u"] == obj.tank_check_hit(walls)["d"]) and not obj.tank_check_hit(walls)[
+#         "d"]:
+#         obj.r[1] += obj.v * np.cos(obj.ang)
 
-    if obj.tank_check_hit(walls)["u"]:
-        if np.cos(obj.ang) >= 0:
-            obj.r[1] += obj.v * np.cos(obj.ang)
-    if obj.tank_check_hit(walls)["d"]:
-        if np.cos(obj.ang) <= 0:
-            obj.r[1] += obj.v * np.cos(obj.ang)
-    if (obj.tank_check_hit(walls)["u"] == obj.tank_check_hit(walls)["d"]) and not obj.tank_check_hit(walls)[
-        "d"]:
-        obj.r[1] += obj.v * np.cos(obj.ang)
 
-
-def move_tank(obj):
+def move_tank(obj, vx, vy):
     if obj.moving_front:
-        obj.v = [-1.5 * np.sin(obj.ang), -1.5 * np.cos(obj.ang)]
+        obj.v = [-vx * np.sin(obj.ang), -vy * np.cos(obj.ang)]
     elif obj.moving_back:
-        obj.v = [1.5 * np.sin(obj.ang), 1.5 * np.cos(obj.ang)]
+        obj.v = [vx * np.sin(obj.ang), vy * np.cos(obj.ang)]
 
     if obj.turning_left:
         obj.ang += obj.omega
