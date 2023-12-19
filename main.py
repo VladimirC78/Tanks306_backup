@@ -105,8 +105,13 @@ def settings_menu(screen):
         pygame.display.flip()
 
 
+
+
 def main():
     screen = pygame.display.set_mode((1200, 800))
+    walls_back = pygame.image.load("stena.jpg")
+    tile=pygame.image.load('tile.jpg')
+
     game_finished = False
     level_finished = False
     while not game_finished:
@@ -119,8 +124,10 @@ def main():
         flag = False
         for i in range(len(field)):
             for j in range(len(field[i])):
-                if field[i][j] == 1:
-                    pygame.draw.rect(screen, (0, 0, 0), (block_size * j, block_size * i, block_size, block_size))
+                if field[i][j]==0 or field[i][j] == 2:
+                    screen.blit(tile,(block_size * j, block_size * i))
+                if field[i][j] == 1 :
+                    screen.blit(walls_back, (block_size * j, block_size * i))
                 if field[i][j] == 2:
                     if not flag:
                         tanks.append(objects.Tank(block_size * j, block_size * i, block_size, 1))
@@ -133,7 +140,9 @@ def main():
             for i in range(len(field)):
                 for j in range(len(field[i])):
                     if field[i][j] == 1:
-                        pygame.draw.rect(screen, (0, 0, 0), (block_size * j, block_size * i, block_size, block_size))
+                        screen.blit(walls_back, (block_size * j, block_size * i))
+                    if field[i][j]==0 or field[i][j] == 2 :
+                        screen.blit(tile,(block_size * j, block_size * i))
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
