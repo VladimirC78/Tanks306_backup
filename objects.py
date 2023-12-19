@@ -14,7 +14,7 @@ class Tank:
         self.r = list([x, y])  # Координаты танка по осям х и у
         self.scale = scale  # Характерный размер танка
         self.v = [0, 0]  # Вектор скорости
-        self.omega = 0.01
+        self.omega = 0.02
         self.ang = 0  # Изначально танк направлен вправо, угол в радианах и отсчитывается по часовой стрелке
         self.charges = 5
         self.tank_hit_walls = {'u': False, 'd': False, 'r': False, 'l': False}

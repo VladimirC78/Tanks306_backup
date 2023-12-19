@@ -12,8 +12,6 @@ from move_draw import move_tank, bullet_move
  """
 screen_width = 800
 screen_height = 600
-FPS = 60
-v = 2
 pygame.init()
 all_sprites = pygame.sprite.Group()
 clock = pygame.time.Clock()
@@ -105,12 +103,10 @@ def settings_menu(screen):
         pygame.display.flip()
 
 
-
-
 def main():
     screen = pygame.display.set_mode((1200, 800))
     walls_back = pygame.image.load("stena.jpg")
-    tile=pygame.image.load('tile.jpg')
+    tile = pygame.image.load('tile.jpg')
 
     game_finished = False
     level_finished = False
@@ -124,9 +120,9 @@ def main():
         flag = False
         for i in range(len(field)):
             for j in range(len(field[i])):
-                if field[i][j]==0 or field[i][j] == 2:
-                    screen.blit(tile,(block_size * j, block_size * i))
-                if field[i][j] == 1 :
+                if field[i][j] == 0 or field[i][j] == 2:
+                    screen.blit(tile, (block_size * j, block_size * i))
+                if field[i][j] == 1:
                     screen.blit(walls_back, (block_size * j, block_size * i))
                 if field[i][j] == 2:
                     if not flag:
@@ -141,26 +137,26 @@ def main():
                 for j in range(len(field[i])):
                     if field[i][j] == 1:
                         screen.blit(walls_back, (block_size * j, block_size * i))
-                    if field[i][j]==0 or field[i][j] == 2 :
-                        screen.blit(tile,(block_size * j, block_size * i))
+                    if field[i][j] == 0 or field[i][j] == 2:
+                        screen.blit(tile, (block_size * j, block_size * i))
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
-                        r_center = [tanks[1].r[0] + 0.65 * tanks[1].scale * np.sin(-tanks[1].ang),
-                                    tanks[1].r[1] - 0.65 * tanks[1].scale * np.cos(-tanks[1].ang)]
+                        r_center = [tanks[1].r[0] + 0.5 * tanks[1].scale * np.sin(-tanks[1].ang),
+                                    tanks[1].r[1] - 0.5 * tanks[1].scale * np.cos(-tanks[1].ang)]
                         bullets2.append(
                             objects.Bullet(r_center[0], r_center[1],
-                                           [-3 * np.sin(tanks[1].ang), -3 * np.cos(tanks[1].ang)],
+                                           [-4 * np.sin(tanks[1].ang), -4 * np.cos(tanks[1].ang)],
                                            5))
                     if event.key == pygame.K_q:
-                        r_center = [tanks[0].r[0] + 0.65 * tanks[0].scale * np.sin(-tanks[0].ang),
-                                    tanks[0].r[1] - 0.65 * tanks[0].scale * np.cos(-tanks[0].ang)]
+                        r_center = [tanks[0].r[0] + 0.5 * tanks[0].scale * np.sin(-tanks[0].ang),
+                                    tanks[0].r[1] - 0.5 * tanks[0].scale * np.cos(-tanks[0].ang)]
                         bullets1.append(
                             objects.Bullet(r_center[0], r_center[1],
-                                           [-3 * np.sin(tanks[0].ang), -3 * np.cos(tanks[0].ang)],
+                                           [-4 * np.sin(tanks[0].ang), -4 * np.cos(tanks[0].ang)],
                                            5))
                     if event.key == pygame.K_w:
                         tanks[0].moving_front = True
@@ -194,8 +190,8 @@ def main():
 
             for t in tanks:
                 t.rect = t.draw(screen)
-                vx = 0.5
-                vy = 0.5
+                vx = 1
+                vy = 1
                 for w in walls:
                     if w.wall_hit(t)['l']:
                         if t.moving_front:
