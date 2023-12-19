@@ -161,6 +161,14 @@ def main():
                         tanks[0].turning_left = True
                     if event.key == pygame.K_d:
                         tanks[0].turning_right = True
+                    if event.key == pygame.K_UP:
+                        tanks[1].moving_front = True
+                    if event.key == pygame.K_DOWN:
+                        tanks[1].moving_back = True
+                    if event.key == pygame.K_LEFT:
+                        tanks[1].turning_left = True
+                    if event.key == pygame.K_RIGHT:
+                        tanks[1].turning_right = True
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_w or event.key == pygame.K_s:
                         tanks[0].moving_front = False
@@ -168,6 +176,12 @@ def main():
                     if event.key == pygame.K_a or event.key == pygame.K_d:
                         tanks[0].turning_right = False
                         tanks[0].turning_left = False
+                    if event.key == pygame.K_UP or event.key == pygame.K_DOWN:
+                        tanks[1].moving_front = False
+                        tanks[1].moving_back = False
+                    if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
+                        tanks[1].turning_right = False
+                        tanks[1].turning_left = False
 
             for t in tanks:
                 t.rect = t.draw(screen)
@@ -185,7 +199,6 @@ def main():
                                 vx = 0
                                 if t.r[0] >= w.r[0] - (w.block_size + t.scale) * 0.4:
                                     t.r[0] = w.r[0] - (w.block_size + t.scale) * 0.4
-                                print(w.wall_hit(t))
                     if w.wall_hit(t)['r']:
                         if t.moving_front:
                             if np.sin(t.ang) > 0:
@@ -197,7 +210,6 @@ def main():
                                 vx = 0
                                 if t.r[0] <= w.r[0] + (w.block_size + t.scale) * 0.4:
                                     t.r[0] = w.r[0] + (w.block_size + t.scale) * 0.4
-                                print(w.wall_hit(t))
                     if w.wall_hit(t)['u']:
                         if t.moving_front:
                             if np.cos(t.ang) < 0:
@@ -209,7 +221,6 @@ def main():
                                 vy = 0
                                 if t.r[1] >= w.r[1] - (w.block_size + t.scale) * 0.4:
                                     t.r[1] = w.r[1] - (w.block_size + t.scale) * 0.4
-                                print(w.wall_hit(t))
                     if w.wall_hit(t)['d']:
                         if t.moving_front:
                             if np.cos(t.ang) > 0:
@@ -221,11 +232,10 @@ def main():
                                 vy = 0
                                 if t.r[1] <= w.r[1] + (w.block_size + t.scale) * 0.4:
                                     t.r[1] = w.r[1] + (w.block_size + t.scale) * 0.4
-                                print(w.wall_hit(t))
                 move_tank(t, vx, vy)
 
             for b in bullets1:
-                b.draw(screen)
+                b.draw(screen, (255, 0, 0))
                 bullet_move(b, walls)
                 if b.life < 0:
                     bullets1.remove(b)
@@ -233,7 +243,7 @@ def main():
                     print("Есть пробитие")
 
             for b in bullets2:
-                b.draw(screen)
+                b.draw(screen, (0, 128, 0))
                 bullet_move(b, walls)
                 if b.life < 0:
                     bullets2.remove(b)

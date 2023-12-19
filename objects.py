@@ -39,8 +39,6 @@ class Tank:
     #     self.tank_hit_walls = {'u': u, 'd': d, 'r': r, 'l': l}
     #     return self.tank_hit_walls
 
-        # Количество выстрелов у танка, перезаряжается со временем
-
     def draw(self, screen):
         image = pygame.transform.scale(pygame.image.load('tank_alt.png'), (self.scale, self.scale))
         rect = image.get_rect(center=(self.r[0], self.r[1]))
@@ -56,7 +54,6 @@ class Bullet:
         self.v = v  # Двумерный вектор со скоростями по осям
         self.life = 2
 
-    def draw(self, screen):
-        pygame.draw.circle(screen, (255, 0, 0), (self.r[0], self.r[1]), self.scale)
+    def draw(self, screen, color):
+        pygame.draw.circle(screen, color, (self.r[0], self.r[1]), self.scale)
 
-# TODO Возможно, в процессе нужно будет добавить еще какие-то параметры
