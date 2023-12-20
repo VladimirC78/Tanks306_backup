@@ -110,6 +110,10 @@ def main():
     breakable_wall3 = pygame.image.load('graphics/breakable_wall3.png')
     bullet_sign = pygame.image.load('graphics/bullet_sign.png')
     shield_sign = pygame.image.load('graphics/shield_sign.png')
+    bonus_shield = pygame.image.load('graphics/bonus_shield.png')
+    bonus_triple = pygame.image.load('graphics/bonus_triple.png')
+    bonus_laser = pygame.image.load('graphics/bonus_laser.png')
+    imgs = [bonus_shield, bonus_triple, bonus_laser]
     game_finished = False
     while not game_finished:
         level_finished = False
@@ -356,7 +360,7 @@ def main():
                 bonuses.append(objects.Bonus((chance[1] + 0.5) * block_size, (chance[0] + 0.5) * block_size, var))
 
             for bonus in bonuses:
-                draw_bonus(screen, bonus)
+                draw_bonus(screen, bonus, imgs)
                 for t in tanks:
                     if bonus_pick(t, bonus):
                         t.bonus = bonus.var

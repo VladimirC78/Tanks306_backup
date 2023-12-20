@@ -31,16 +31,14 @@ def bullet_draw(screen, color, obj):
     pygame.draw.circle(screen, color, (obj.r[0], obj.r[1]), obj.scale)
 
 
-def draw_bonus(screen, obj):
-    color = (255, 255, 255)
+def draw_bonus(screen, obj, imgs):
     if obj.var == 'LASER':
-        color = (0, 0, 0)
+        screen.blit(imgs[2], (obj.r[0] - 17, obj.r[1] - 6))
     elif obj.var == 'TRIPLESHOT':
-        color = (255, 0, 0)
+        screen.blit(imgs[1], (obj.r[0] - 19, obj.r[1] - 10))
     elif obj.var == 'SHIELD':
-        color = (0, 128, 0)
+        screen.blit(imgs[0], (obj.r[0] - 20, obj.r[1] - 20))
 
-    pygame.draw.circle(screen, color, obj.r, 10)
 
 
 # def motion_up(obj,
