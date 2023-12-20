@@ -109,6 +109,7 @@ def main():
     breakable_wall2 = pygame.image.load('breakable_wall2.png')
     breakable_wall3 = pygame.image.load('breakable_wall3.png')
     bullet_sign = pygame.image.load('bullet_sign.png')
+    shield_sign = pygame.image.load('shield_sign.png')
     game_finished = False
     while not game_finished:
         level_finished = False
@@ -153,6 +154,11 @@ def main():
 
             for i in range(tanks[1].charges):
                 screen.blit(bullet_sign, (1170 - i * 16, 20))
+
+            if tanks[0].bonus == 'SHIELD':
+                screen.blit(shield_sign, (37, 55))
+            if tanks[1].bonus == 'SHIELD':
+                screen.blit(shield_sign, (1122, 55))
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
