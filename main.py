@@ -172,6 +172,8 @@ def main():
     bonus_shield = pygame.image.load('graphics/bonus_shield.png')
     bonus_triple = pygame.image.load('graphics/bonus_triple.png')
     bonus_laser = pygame.image.load('graphics/bonus_laser.png')
+    sound_of_bullet = pygame.mixer.Sound("music/vyistrel-pistoleta-36125.wav")
+    sound_of_laser = pygame.mixer.Sound("music/orujie-lazer.wav")
     imgs = [bonus_shield, bonus_triple, bonus_laser]
 
     game_finished = False
@@ -265,6 +267,7 @@ def main():
                         if event.key == pygame.K_SPACE and (tanks[1].bonus == 'NONE' or tanks[1].bonus == 'SHIELD'):
                             # Обычный выстрел - если не подобраны бонусы вроде лазера или тройного выстрела
                             if tanks[1].charges > 0:
+                                sound_of_bullet.play()
                                 tanks[1].charges -= 1
                                 timer2 = 0
                                 bullets2.append(objects.Bullet(r_center1[0], r_center1[1],
@@ -286,6 +289,7 @@ def main():
                                 tanks[1].bonus = 'NONE'
 
                             elif tanks[1].bonus == 'LASER':
+                                sound_of_laser.play()
                                 # Расчет положения конечной точки отрезка в зависимости от угла поворота и координат
                                 # танка
                                 if np.sin(-tanks[1].ang) > 0:
@@ -313,6 +317,7 @@ def main():
 
                         if event.key == pygame.K_q and (tanks[0].bonus == 'NONE' or tanks[0].bonus == 'SHIELD'):
                             if tanks[0].charges > 0:
+                                sound_of_bullet.play()
                                 tanks[0].charges -= 1
                                 timer1 = 0
                                 bullets1.append(objects.Bullet(r_center0[0], r_center0[1],
@@ -332,6 +337,7 @@ def main():
                                 tanks[0].bonus = 'NONE'
 
                             elif tanks[0].bonus == 'LASER':
+                                sound_of_laser.play()
                                 if np.sin(-tanks[0].ang) > 0:
                                     y_edge = r_center0[1] - (width - r_center0[0]) / np.tan(-tanks[0].ang)
                                 elif np.sin(-tanks[0].ang) == 0 and np.cos(-tanks[0].ang) == -1:
