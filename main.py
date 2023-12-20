@@ -1,7 +1,5 @@
 import sys
 
-import pygame
-
 from move_draw import *
 
 """Нужно будет загрузить картинки и звуки в папку проекта, image path  и ему подобные - переменные, в которые 
@@ -104,23 +102,23 @@ def settings_menu(screen):
             button.draw(screen)
         pygame.display.flip()
 
+
 def draw_text(surf, text, size, x, y):
     font = pygame.font.Font((pygame.font.match_font('arial')), size)
-    text_surface = font.render(text, True, (255,0,0))
+    text_surface = font.render(text, True, (255, 0, 0))
     text_rect = text_surface.get_rect()
     text_rect.midtop = (x, y)
     surf.blit(text_surface, text_rect)
 
+
 def perexod():
     dead = pygame.image.load("menu_pics/dead.jpg")
-    screen.blit(dead, (180,80))
+    screen.blit(dead, (180, 80))
     draw_text(screen, "GAME OVER", 120, 1200 / 2, 800 / 4)
     draw_text(screen, "Press F key to begin", 30, 1200 / 2, 800 * 3 / 4)
     pygame.display.flip()
     # for event in pygame.event.get():
     #     if event.key == pygame.K_f:
-
-
 
 
 def main():
@@ -216,11 +214,13 @@ def main():
                                 tanks[1].charges -= 1
                                 timer2 = 0
                                 bullets2.append(objects.Bullet(r_center1[0], r_center1[1],
-                                                               [-4 * np.sin(tanks[1].ang), -4 * np.cos(tanks[1].ang)], 5))
+                                                               [-4 * np.sin(tanks[1].ang), -4 * np.cos(tanks[1].ang)],
+                                                               5))
                         elif event.key == pygame.K_SPACE:
                             if tanks[1].bonus == 'TRIPLESHOT':
                                 bullets2.append(objects.Bullet(r_center1[0], r_center1[1],
-                                                               [-4 * np.sin(tanks[1].ang), -4 * np.cos(tanks[1].ang)], 5))
+                                                               [-4 * np.sin(tanks[1].ang), -4 * np.cos(tanks[1].ang)],
+                                                               5))
                                 bullets2.append(objects.Bullet(r_center1[0], r_center1[1],
                                                                [-4 * np.sin(tanks[1].ang - 0.25),
                                                                 -4 * np.cos(tanks[1].ang - 0.25)], 5))
@@ -256,11 +256,13 @@ def main():
                                 tanks[0].charges -= 1
                                 timer1 = 0
                                 bullets1.append(objects.Bullet(r_center0[0], r_center0[1],
-                                                               [-4 * np.sin(tanks[0].ang), -4 * np.cos(tanks[0].ang)], 5))
+                                                               [-4 * np.sin(tanks[0].ang), -4 * np.cos(tanks[0].ang)],
+                                                               5))
                         elif event.key == pygame.K_q:
                             if tanks[0].bonus == 'TRIPLESHOT':
                                 bullets1.append(objects.Bullet(r_center0[0], r_center0[1],
-                                                               [-4 * np.sin(tanks[0].ang), -4 * np.cos(tanks[0].ang)], 5))
+                                                               [-4 * np.sin(tanks[0].ang), -4 * np.cos(tanks[0].ang)],
+                                                               5))
                                 bullets1.append(objects.Bullet(r_center0[0], r_center0[1],
                                                                [-4 * np.sin(tanks[0].ang - 0.25),
                                                                 -4 * np.cos(tanks[0].ang - 0.25)], 5))
@@ -415,7 +417,6 @@ def main():
                         level_finished = True
                         print('Player 1 win')
 
-
                 for w in walls:
                     if isinstance(w, BreakableWall):
                         if w.hp < 0:
@@ -451,7 +452,7 @@ def main():
                             bonuses.remove(bonus)
 
                 for laser in lasers2:
-                    draw_laser(screen, laser)
+                    draw_laser(screen, laser, (0, 0, 255))
                     laser.life_time -= 1
                     if laser.life_time <= 0:
                         lasers2.remove(laser)
@@ -459,13 +460,12 @@ def main():
                         tanks[0].hp -= 1
 
                 for laser in lasers1:
-                    draw_laser(screen, laser)
+                    draw_laser(screen, laser, (255, 0, 0))
                     laser.life_time -= 1
                     if laser.life_time <= 0:
                         lasers1.remove(laser)
                     if laser_hit(tanks[1], laser):
                         tanks[1].hp -= 1
-
 
 
 if __name__ == "__main__":
