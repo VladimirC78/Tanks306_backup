@@ -5,8 +5,72 @@ import pygame
 
 import Levels_encoded
 import objects
+import math
 
 map_number = len(Levels_encoded.fields)
+
+
+def segm_dist(xa, ya, xb, yb, xc, yc, xd, yd):
+    def ras(x1, y1, x2, y2, x3, y3):
+        ## Если отрезок вертикальный - меняем местами координаты каждой точки.
+        if x1 == x2:
+            x1, y1 = y1, x1
+            x2, y2 = y2, x2
+            x3, y3 = y3, x3
+        k = (y1 - y2) / (x1 - x2)  ## Ищем коэффициенты уравнения прямой, которому принадлежит данный отрезок.
+        d = y1 - k * x1
+        xz = (x3 * x2 - x3 * x1 + y2 * y3 - y1 * y3 + y1 * d - y2 * d) / (k * y2 - k * y1 + x2 - x1)
+        dl = -1
+        if (x2 >= xz >= x1) or (x1 >= xz >= x2):
+            dl = math.sqrt((x3 - xz) * (x3 - xz) + (y3 - xz * k - d) * (
+                        y3 - xz * k - d))  ## Проверим лежит ли основание высоты на отрезке.
+        return dl
+
+    ## Вводим параметры отрезков
+    # xa, ya, xb, yb = [1, 1, 2, 2]
+    # xc, yc, xd, yd = [2, 1, 3, 0]
+
+    minimal = -1
+    t = -2
+    s = -2
+
+    o = (xb - xa) * (-yd + yc) - (yb - ya) * (-xd + xc)
+    o1 = (xb - xa) * (yc - ya) - (yb - ya) * (xc - xa)
+    o2 = (-yd + yc) * (xc - xa) - (-xd + xc) * (yc - ya)
+
+    if o != 0:
+        t = o1 / o
+        s = o2 / o
+
+    if (t >= 0 and s >= 0) and (t <= 1 and s <= 1):
+        minimal = 0  ## Проверим пересекаются ли отрезки.
+    else:
+        ## Найдём наименьшую высоту опущенную из конца одного отрезка на другой.
+        dl1 = ras(xa, ya, xb, yb, xc, yc)
+        minimal = dl1
+        dl2 = ras(xa, ya, xb, yb, xd, yd)
+        if (dl2 < minimal and dl2 != -1) or minimal == -1:
+            minimal = dl2
+        dl3 = ras(xc, yc, xd, yd, xa, ya)
+        if (dl3 < minimal and dl3 != -1) or minimal == -1:
+            minimal = dl3
+        dl4 = ras(xc, yc, xd, yd, xb, yb)
+        if (dl4 < minimal and dl4 != -1) or minimal == -1:
+            minimal = dl4
+        if minimal == -1:
+            ## В случае, если невозможно опустить высоту найдём минимальное расстояние между точками.
+            dl1 = math.sqrt((xa - xc) * (xa - xc) + (ya - yc) * (ya - yc))
+            minimal = dl1
+            dl2 = math.sqrt((xb - xd) * (xb - xd) + (yb - yd) * (yb - yd))
+            if dl2 < minimal:
+                minimal = dl2
+            dl3 = math.sqrt((xb - xc) * (xb - xc) + (yb - yc) * (yb - yc))
+            if dl3 < minimal:
+                minimal = dl3
+        dl4 = math.sqrt((xa - xd) * (xa - xd) + (ya - yd) * (ya - yd))
+        if dl4 < minimal:
+            minimal = dl4
+    return minimal
 
 
 def create_walls(field, block_size):
@@ -39,6 +103,21 @@ def check_hit(obj1, obj2):
     y1 = obj1.rect.topleft[1] - obj2.scale
     hit_rect = pygame.Rect(x1, y1, obj1.scale + 2 * obj2.scale, obj1.scale + 2 * obj2.scale)
     if hit_rect.collidepoint(obj2.r):
+        return True
+    else:
+        return False
+
+
+def laser_hit(obj1, obj2):
+    r_a = obj1.rect.topleft
+    r_b = obj1.rect.topright
+    r_c = obj1.rect.bottomright
+    r_d = obj1.rect.bottomleft
+    dist1 = segm_dist(r_a[0], r_a[1], r_b[0], r_b[1], obj2.r[0], obj2.r[1], obj2.end[0], obj2.end[1])
+    dist2 = segm_dist(r_b[0], r_b[1], r_c[0], r_c[1], obj2.r[0], obj2.r[1], obj2.end[0], obj2.end[1])
+    dist3 = segm_dist(r_c[0], r_c[1], r_d[0], r_d[1], obj2.r[0], obj2.r[1], obj2.end[0], obj2.end[1])
+    dist4 = segm_dist(r_d[0], r_d[1], r_a[0], r_a[1], obj2.r[0], obj2.r[1], obj2.end[0], obj2.end[1])
+    if dist1 == 0 or dist2 == 0 or dist3 == 0 or dist4 == 0:
         return True
     else:
         return False

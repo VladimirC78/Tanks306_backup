@@ -19,6 +19,7 @@ class Tank:
         self.turning_left = False
         self.turning_right = False
         self.bonus = 'NONE'
+        self.hp = 1
 
 
 class Bullet:
@@ -33,3 +34,11 @@ class Bonus:
     def __init__(self, x, y, var):
         self.r = [x, y]
         self.var = var  # Тип бонуса
+
+
+class Laser:
+    def __init__(self, r, end):
+        self.r = r
+        self.end = end
+        self.life_time = 30
+        self.width = 10

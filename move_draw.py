@@ -40,6 +40,10 @@ def draw_bonus(screen, obj, imgs):
         screen.blit(imgs[0], (obj.r[0] - 20, obj.r[1] - 20))
 
 
+def draw_laser(screen, obj):
+    pygame.draw.line(screen, (0, 0, 255), [obj.r[0], obj.r[1]], [obj.end[0], obj.end[1]], obj.width)
+
+
 
 # def motion_up(obj,
 #               walls):  # движение вверх с учетом столкновения танка со стенами в карте(у танка теперь есть свой словарь)
