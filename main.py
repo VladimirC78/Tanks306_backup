@@ -140,12 +140,12 @@ def draw_text(surf, text, size, x, y):
 """Функция, отображающая переход между уровнями при поражении одного из игроков"""
 
 
-def perexod(slova,slova2):
+def perexod(slova, slova2):
     dead = pygame.image.load("menu_pics/dead.jpg")
-    screen.blit(dead, (180,80))
+    screen.blit(dead, (180, 80))
     draw_text(screen, "GAME OVER", 120, 1200 / 2, 800 / 4)
-    draw_text(screen, slova, 50,1200 / 2, 800 / 2)
-    draw_text(screen, slova2,50,1200 / 2, 800 * 5 / 8)
+    draw_text(screen, slova, 50, 1200 / 2, 800 / 2)
+    draw_text(screen, slova2, 50, 1200 / 2, 800 * 5 / 8)
     draw_text(screen, "Press F key to begin", 30, 1200 / 2, 800 * 3 / 4)
     pygame.display.flip()
     # for event in pygame.event.get():
@@ -172,8 +172,9 @@ def main():
 
     game_finished = False
     level_finished = False
-    p1=0
-    p2=0
+    p1 = 0
+    p2 = 0
+    v_bullet = 4
 
     while not game_finished:
         # Внешний игровой цикл, с каждой итерацией создает новый уровень
@@ -185,7 +186,7 @@ def main():
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_f:
                         level_finished = False
-            perexod(slova,slova2)
+            perexod(slova, slova2)
         else:
             screen.fill((255, 255, 255))
             walls, field, block_size = create_new_map()  # Основные параметры карты
@@ -263,21 +264,21 @@ def main():
                                 tanks[1].charges -= 1
                                 timer2 = 0
                                 bullets2.append(objects.Bullet(r_center1[0], r_center1[1],
-                                                               [-4 * np.sin(tanks[1].ang), -4 * np.cos(tanks[1].ang)],
+                                                               [-v_bullet * np.sin(tanks[1].ang), -v_bullet * np.cos(tanks[1].ang)],
                                                                5))
                         elif event.key == pygame.K_SPACE:
                             if tanks[1].bonus == 'TRIPLESHOT':
                                 # Тройной выстрел - создаются 2 дополнительные пули под одинаковым углом
                                 # к основному направлению
                                 bullets2.append(objects.Bullet(r_center1[0], r_center1[1],
-                                                               [-4 * np.sin(tanks[1].ang), -4 * np.cos(tanks[1].ang)],
+                                                               [-v_bullet * np.sin(tanks[1].ang), -v_bullet * np.cos(tanks[1].ang)],
                                                                5))
                                 bullets2.append(objects.Bullet(r_center1[0], r_center1[1],
-                                                               [-4 * np.sin(tanks[1].ang - 0.25),
-                                                                -4 * np.cos(tanks[1].ang - 0.25)], 5))
+                                                               [-v_bullet * np.sin(tanks[1].ang - 0.25),
+                                                                -v_bullet * np.cos(tanks[1].ang - 0.25)], 5))
                                 bullets2.append(objects.Bullet(r_center1[0], r_center1[1],
-                                                               [-4 * np.sin(tanks[1].ang + 0.25),
-                                                                -4 * np.cos(tanks[1].ang + 0.25)], 5))
+                                                               [-v_bullet * np.sin(tanks[1].ang + 0.25),
+                                                                -v_bullet * np.cos(tanks[1].ang + 0.25)], 5))
                                 tanks[1].bonus = 'NONE'
 
                             elif tanks[1].bonus == 'LASER':
@@ -311,19 +312,19 @@ def main():
                                 tanks[0].charges -= 1
                                 timer1 = 0
                                 bullets1.append(objects.Bullet(r_center0[0], r_center0[1],
-                                                               [-4 * np.sin(tanks[0].ang), -4 * np.cos(tanks[0].ang)],
+                                                               [-v_bullet * np.sin(tanks[0].ang), -v_bullet * np.cos(tanks[0].ang)],
                                                                5))
                         elif event.key == pygame.K_q:
                             if tanks[0].bonus == 'TRIPLESHOT':
                                 bullets1.append(objects.Bullet(r_center0[0], r_center0[1],
-                                                               [-4 * np.sin(tanks[0].ang), -4 * np.cos(tanks[0].ang)],
+                                                               [-v_bullet * np.sin(tanks[0].ang), -v_bullet * np.cos(tanks[0].ang)],
                                                                5))
                                 bullets1.append(objects.Bullet(r_center0[0], r_center0[1],
-                                                               [-4 * np.sin(tanks[0].ang - 0.25),
-                                                                -4 * np.cos(tanks[0].ang - 0.25)], 5))
+                                                               [-v_bullet * np.sin(tanks[0].ang - 0.25),
+                                                                -v_bullet * np.cos(tanks[0].ang - 0.25)], 5))
                                 bullets1.append(objects.Bullet(r_center0[0], r_center0[1],
-                                                               [-4 * np.sin(tanks[0].ang + 0.25),
-                                                                -4 * np.cos(tanks[0].ang + 0.25)], 5))
+                                                               [-v_bullet * np.sin(tanks[0].ang + 0.25),
+                                                                -v_bullet * np.cos(tanks[0].ang + 0.25)], 5))
                                 tanks[0].bonus = 'NONE'
 
                             elif tanks[0].bonus == 'LASER':
@@ -475,16 +476,16 @@ def main():
                     dead_timer1 += 1
                     if dead_timer1 >= 30:
                         level_finished = True
-                        slova=('Player 2 win')
-                        p2+=1
-                        slova2=f'Score P1: {p1}, P2 {p2}'
+                        slova = ('Player 2 win')
+                        p2 += 1
+                        slova2 = f'Score P1: {p1}, P2 {p2}'
                 elif tanks[1].hp <= 0:
                     dead_timer2 += 1
                     if dead_timer2 >= 30:
                         level_finished = True
-                        slova=('Player 1 win')
-                        p1+=1
-                        slova2=f'Score P1:{p1}, P2:{p2}'
+                        slova = ('Player 1 win')
+                        p1 += 1
+                        slova2 = f'Score P1:{p1}, P2:{p2}'
 
                 # Удаление разбитой стены
                 for w in walls:
@@ -509,7 +510,7 @@ def main():
 
                 # Появление бонуса через равные интервалы времени
                 bonus_timer += 1
-                if bonus_timer % 1500 == 0 and len(bonuses) <= 5:
+                if bonus_timer % 500 == 0 and len(bonuses) <= 5:
                     chance = [0, 0]
                     while field[chance[0]][chance[1]] == 1:
                         chance[0] = random.choice(range(len(field)))
