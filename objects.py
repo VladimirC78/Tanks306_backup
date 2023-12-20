@@ -15,7 +15,6 @@ class Tank:
         self.omega = 0.02  # Угловая скорость при поворотах
         self.ang = 0  # Изначально танк направлен вправо, угол в радианах и отсчитывается по часовой стрелке
         self.charges = 5  # Количество выстрелов
-        self.live = 1  # жизнь танка
         # Хитбокс танка
         self.rect = pygame.Rect(self.r[0] - self.scale * 0.5, self.r[1] - self.scale * 0.5, self.scale, self.scale)
         # Параметры движения танка
