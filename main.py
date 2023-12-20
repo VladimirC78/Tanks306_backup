@@ -136,7 +136,7 @@ def draw_text(surf, text, size, x, y):
     text_rect.midtop = (x, y)
     surf.blit(text_surface, text_rect)
 
-
+""""""
 """Функция, отображающая переход между уровнями при поражении одного из игроков"""
 
 
