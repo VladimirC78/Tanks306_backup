@@ -1,5 +1,6 @@
 import sys
 
+
 from move_draw import *
 
 screen_width = 800
@@ -10,6 +11,10 @@ clock = pygame.time.Clock()
 screen = pygame.display.set_mode((screen_width, screen_height))
 menu_background = pygame.image.load("menu_pics/settings.jpg")
 settings_background = pygame.image.load("menu_pics/settings.jpg")
+
+
+pygame.mixer.music.load("music/music_path.mp3")
+play_music = True
 
 """Класс кнопок меню"""
 
@@ -44,7 +49,10 @@ class Image_Button():
 """Функция, отображающая главное меню"""
 
 
-def main_menu(screen):
+def main_menu(screen, play_music):
+    if play_music == True:
+        pygame.mixer.music.play(-1)
+
     start_button = Image_Button(screen_width / 2 - 252 / 2, 100, 252, 74, "menu_pics/start_button.png",
                                 "menu_pics/hovered_start_button.png")
     quit_button = Image_Button(screen_width / 2 - 125, 250, 252, 74, "menu_pics/quit_button.png",
@@ -54,6 +62,7 @@ def main_menu(screen):
     buttons = [start_button, settings_button, quit_button]
     running = True
     while running:
+
         screen.fill((0, 0, 0))
         screen.blit(menu_background, (-300, 0))
         for event in pygame.event.get():
@@ -67,7 +76,7 @@ def main_menu(screen):
             for button in buttons:
                 button.handle_event(event)
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and settings_button.is_hovered:
-                settings_menu(screen)
+                settings_menu(screen,play_music)
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and quit_button.is_hovered:
                 running = False
                 pygame.quit()
@@ -79,10 +88,19 @@ def main_menu(screen):
         pygame.display.flip()
 
 
-def settings_menu(screen):
+def settings_menu(screen,play_music):
+    normal_mute_button = "menu_pics/playing_mute_button.png"
+    muted_mute_button = "menu_pics/muted_button.png"
+
+    if play_music  == True:
+        mute_button = normal_mute_button
+    else:
+        mute_button = muted_mute_button
     back_button = Image_Button(screen_width / 2 - 150 / 2, 500, 150, 74, "menu_pics/button_back.png",
                                "menu_pics/hovered_button_back.png")
-    buttons = [back_button]
+    mute_button=Image_Button(screen_width / 2 - 150 / 2, 400, 150, 74, mute_button,
+                             "menu_pics/hovered_mute_button.png")
+    buttons = [back_button,mute_button]
     running = True
     while running:
         screen.fill((0, 0, 0))
@@ -95,10 +113,19 @@ def settings_menu(screen):
             for button in buttons:
                 button.handle_event(event)
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and back_button.is_hovered:
-                main_menu(screen)
+                main_menu(screen,play_music)
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and mute_button.is_hovered:
+                if play_music:
+                    pygame.mixer.music.pause()
+                    play_music = False
+                else:
+                    pygame.mixer.music.unpause()
+                    play_music = True
+
         for button in buttons:
             button.check_hover(pygame.mouse.get_pos())
             button.draw(screen)
+
         pygame.display.flip()
 
 
@@ -517,4 +544,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main_menu(screen)
+    main_menu(screen, play_music)
