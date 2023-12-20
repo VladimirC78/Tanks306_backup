@@ -109,9 +109,8 @@ def main():
     tile = pygame.image.load('tile.jpg')
 
     game_finished = False
-    level_finished = False
     while not game_finished:
-
+        level_finished = False
         screen.fill((255, 255, 255))
         walls, field, block_size = create_new_map()
         tanks = []
@@ -245,7 +244,8 @@ def main():
                 if b.life < 0:
                     bullets1.remove(b)
                 if check_hit(tanks[1], b):
-                    print("Есть пробитие")
+                    print("Победил игрок 1")
+                    level_finished = True
 
             for b in bullets2:
                 b.draw(screen, (0, 128, 0))
@@ -253,7 +253,8 @@ def main():
                 if b.life < 0:
                     bullets2.remove(b)
                 if check_hit(tanks[0], b):
-                    print("Есть пробитие")
+                    print("Победил игрок 2")
+                    level_finished = True
             # clock.tick(FPS)
 
 
