@@ -14,8 +14,8 @@ pygame.init()
 all_sprites = pygame.sprite.Group()
 clock = pygame.time.Clock()
 screen = pygame.display.set_mode((screen_width, screen_height))
-menu_background = pygame.image.load("settings.jpg")
-settings_background = pygame.image.load("settings.jpg")
+menu_background = pygame.image.load("menu_pics/settings.jpg")
+settings_background = pygame.image.load("menu_pics/settings.jpg")
 
 
 class Image_Button():
@@ -46,11 +46,11 @@ class Image_Button():
 
 
 def main_menu(screen):
-    start_button = Image_Button(screen_width / 2 - 252 / 2, 100, 252, 74, "start_button.png",
-                                "hovered_start_button.png")
-    quit_button = Image_Button(screen_width / 2 - 125, 250, 252, 74, "quit_button.png", "hovered_quit_button.png")
-    settings_button = Image_Button(screen_width / 2 - 252 / 2, 400, 252, 150, "settings_button.png",
-                                   "hovered_settings_button.png")
+    start_button = Image_Button(screen_width / 2 - 252 / 2, 100, 252, 74, "menu_pics/start_button.png",
+                                "menu_pics/hovered_start_button.png")
+    quit_button = Image_Button(screen_width / 2 - 125, 250, 252, 74, "menu_pics/quit_button.png", "menu_pics/hovered_quit_button.png")
+    settings_button = Image_Button(screen_width / 2 - 252 / 2, 400, 252, 150, "menu_pics/settings_button.png",
+                                   "menu_pics/hovered_settings_button.png")
     buttons = [start_button, settings_button, quit_button]
     running = True
     while running:
@@ -80,7 +80,7 @@ def main_menu(screen):
 
 
 def settings_menu(screen):
-    back_button = Image_Button(screen_width / 2 - 150 / 2, 500, 150, 74, "button_back.png", "hovered_button_back.png")
+    back_button = Image_Button(screen_width / 2 - 150 / 2, 500, 150, 74, "menu_pics/button_back.png", "menu_pics/hovered_button_back.png")
     buttons = [back_button]
     running = True
     while running:
@@ -103,13 +103,13 @@ def settings_menu(screen):
 
 def main():
     screen = pygame.display.set_mode((1200, 800))
-    walls_back = pygame.image.load("stena.jpg")
-    tile = pygame.image.load('tile.jpg')
-    breakable_wall1 = pygame.image.load('breakable_wall1.png')
-    breakable_wall2 = pygame.image.load('breakable_wall2.png')
-    breakable_wall3 = pygame.image.load('breakable_wall3.png')
-    bullet_sign = pygame.image.load('bullet_sign.png')
-    shield_sign = pygame.image.load('shield_sign.png')
+    walls_back = pygame.image.load('graphics/stena.jpg')
+    tile = pygame.image.load('graphics/tile.jpg')
+    breakable_wall1 = pygame.image.load('graphics/breakable_wall1.png')
+    breakable_wall2 = pygame.image.load('graphics/breakable_wall2.png')
+    breakable_wall3 = pygame.image.load('graphics/breakable_wall3.png')
+    bullet_sign = pygame.image.load('graphics/bullet_sign.png')
+    shield_sign = pygame.image.load('graphics/shield_sign.png')
     game_finished = False
     while not game_finished:
         level_finished = False
@@ -187,6 +187,7 @@ def main():
 
                         elif tanks[1].bonus == 'LASER':
                             print('LASER')
+                            tanks[1].bonus = 'NONE'
 
                     if event.key == pygame.K_q and (tanks[0].bonus == 'NONE' or tanks[0].bonus == 'SHIELD'):
                         if tanks[0].charges > 0:
@@ -212,6 +213,7 @@ def main():
 
                         elif tanks[0].bonus == 'LASER':
                             print('LASER')
+                            tanks[0].bonus = 'NONE'
 
                     if event.key == pygame.K_w:
                         tanks[0].moving_front = True

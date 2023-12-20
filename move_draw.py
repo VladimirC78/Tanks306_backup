@@ -91,7 +91,7 @@ def rot_center(image, rect, angle):
 
 
 def draw_tank(obj, screen):
-    image = pygame.transform.scale(pygame.image.load('tank_alt.png'), (obj.scale, obj.scale))
+    image = pygame.transform.scale(pygame.image.load('graphics/tank_alt.png'), (obj.scale, obj.scale))
     rect = image.get_rect(center=(obj.r[0], obj.r[1]))
     surf, r = rot_center(image, rect, obj.ang * 180 / math.pi)
     screen.blit(surf, r)
