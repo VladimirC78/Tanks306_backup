@@ -27,6 +27,22 @@ def bullet_move(obj, walls):
        как игра сможет запуститься """
 
 
+def bullet_draw(screen, color, obj):
+    pygame.draw.circle(screen, color, (obj.r[0], obj.r[1]), obj.scale)
+
+
+def draw_bonus(screen, obj):
+    color = (255, 255, 255)
+    if obj.var == 'LASER':
+        color = (0, 0, 0)
+    elif obj.var == 'TRIPLESHOT':
+        color = (255, 0, 0)
+    elif obj.var == 'SHIELD':
+        color = (0, 128, 0)
+
+    pygame.draw.circle(screen, color, obj.r, 10)
+
+
 # def motion_up(obj,
 #               walls):  # движение вверх с учетом столкновения танка со стенами в карте(у танка теперь есть свой словарь)
 #     if obj.tank_check_hit(walls)["l"]:

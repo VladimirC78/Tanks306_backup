@@ -44,6 +44,13 @@ def check_hit(obj1, obj2):
         return False
 
 
+def bonus_pick(obj1, obj2):
+    if obj1.rect.collidepoint(obj2.r):
+        return True
+    else:
+        return False
+
+
 class Wall:
     def __init__(self, block_size, x, y):
         self.block_size = block_size

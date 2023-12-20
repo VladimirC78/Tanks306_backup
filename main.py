@@ -117,9 +117,11 @@ def main():
         tanks = []
         bullets1 = []
         bullets2 = []
+        bonuses = []
         flag = False
         timer1 = 0
         timer2 = 0
+        bonus_timer = 0
         for i in range(len(field)):
             for j in range(len(field[i])):
                 if field[i][j] == 2:
@@ -157,18 +159,54 @@ def main():
                     pygame.quit()
                     sys.exit()
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_SPACE:
+                    if event.key == pygame.K_SPACE and (tanks[1].bonus == 'NONE' or tanks[1].bonus == 'SHIELD'):
                         if tanks[1].charges > 0:
                             tanks[1].charges -= 1
                             timer2 = 0
-                            r_center = [tanks[1].r[0] + 0.5 * tanks[1].scale * np.sin(-tanks[1].ang), tanks[1].r[1] - 0.5 * tanks[1].scale * np.cos(-tanks[1].ang)]
-                            bullets2.append(objects.Bullet(r_center[0], r_center[1], [-4 * np.sin(tanks[1].ang), -4 * np.cos(tanks[1].ang)], 5))
-                    if event.key == pygame.K_q:
+                            r_center = [tanks[1].r[0] + 0.5 * tanks[1].scale * np.sin(-tanks[1].ang),
+                                        tanks[1].r[1] - 0.5 * tanks[1].scale * np.cos(-tanks[1].ang)]
+                            bullets2.append(objects.Bullet(r_center[0], r_center[1],
+                                                           [-4 * np.sin(tanks[1].ang), -4 * np.cos(tanks[1].ang)], 5))
+                    elif event.key == pygame.K_SPACE:
+                        if tanks[1].bonus == 'TRIPLESHOT':
+                            r_center = [tanks[1].r[0] + 0.5 * tanks[1].scale * np.sin(-tanks[1].ang),
+                                        tanks[1].r[1] - 0.5 * tanks[1].scale * np.cos(-tanks[1].ang)]
+                            bullets2.append(objects.Bullet(r_center[0], r_center[1],
+                                                           [-4 * np.sin(tanks[1].ang), -4 * np.cos(tanks[1].ang)], 5))
+                            bullets2.append(objects.Bullet(r_center[0], r_center[1],
+                                                           [-4 * np.sin(tanks[1].ang - 0.25), -4 * np.cos(tanks[1].ang - 0.25)], 5))
+                            bullets2.append(objects.Bullet(r_center[0], r_center[1],
+                                                           [-4 * np.sin(tanks[1].ang + 0.25), -4 * np.cos(tanks[1].ang + 0.25)], 5))
+                            tanks[1].bonus = 'NONE'
+
+                        elif tanks[1].bonus == 'LASER':
+                            print('LASER')
+
+                    if event.key == pygame.K_q and (tanks[0].bonus == 'NONE' or tanks[0].bonus == 'SHIELD'):
                         if tanks[0].charges > 0:
                             tanks[0].charges -= 1
                             timer1 = 0
-                            r_center = [tanks[0].r[0] + 0.5 * tanks[0].scale * np.sin(-tanks[0].ang), tanks[0].r[1] - 0.5 * tanks[0].scale * np.cos(-tanks[0].ang)]
-                            bullets1.append(objects.Bullet(r_center[0], r_center[1], [-4 * np.sin(tanks[0].ang), -4 * np.cos(tanks[0].ang)], 5))
+                            r_center = [tanks[0].r[0] + 0.5 * tanks[0].scale * np.sin(-tanks[0].ang),
+                                        tanks[0].r[1] - 0.5 * tanks[0].scale * np.cos(-tanks[0].ang)]
+                            bullets1.append(objects.Bullet(r_center[0], r_center[1],
+                                                           [-4 * np.sin(tanks[0].ang), -4 * np.cos(tanks[0].ang)], 5))
+                    elif event.key == pygame.K_q:
+                        if tanks[0].bonus == 'TRIPLESHOT':
+                            r_center = [tanks[0].r[0] + 0.5 * tanks[0].scale * np.sin(-tanks[0].ang),
+                                        tanks[0].r[1] - 0.5 * tanks[0].scale * np.cos(-tanks[0].ang)]
+                            bullets1.append(objects.Bullet(r_center[0], r_center[1],
+                                                           [-4 * np.sin(tanks[0].ang), -4 * np.cos(tanks[0].ang)], 5))
+                            bullets1.append(objects.Bullet(r_center[0], r_center[1],
+                                                           [-4 * np.sin(tanks[0].ang - 0.25),
+                                                            -4 * np.cos(tanks[0].ang - 0.25)], 5))
+                            bullets1.append(objects.Bullet(r_center[0], r_center[1],
+                                                           [-4 * np.sin(tanks[0].ang + 0.25),
+                                                            -4 * np.cos(tanks[0].ang + 0.25)], 5))
+                            tanks[0].bonus = 'NONE'
+
+                        elif tanks[0].bonus == 'LASER':
+                            print('LASER')
+
                     if event.key == pygame.K_w:
                         tanks[0].moving_front = True
                     if event.key == pygame.K_s:
@@ -251,22 +289,36 @@ def main():
                 move_tank(t, vx, vy)
 
             for b in bullets1:
-                b.draw(screen, (255, 0, 0))
+                bullet_draw(screen, (255, 0, 0), b)
                 bullet_move(b, walls)
                 if b.life < 0:
                     bullets1.remove(b)
                 if check_hit(tanks[1], b):
-                    print("Победил игрок 1")
-                    level_finished = True
+                    if tanks[1].bonus != 'SHIELD':
+                        print("Победил игрок 1")
+                        level_finished = True
+                    else:
+                        tanks[1].bonus = 'NONE'
+                        b.r[0] -= b.v[0] * 5
+                        b.r[1] -= b.v[1] * 5
+                        b.v[0] *= -1
+                        b.v[1] *= -1
 
             for b in bullets2:
-                b.draw(screen, (0, 128, 0))
+                bullet_draw(screen, (0, 128, 0), b)
                 bullet_move(b, walls)
                 if b.life < 0:
                     bullets2.remove(b)
                 if check_hit(tanks[0], b):
-                    print("Победил игрок 2")
-                    level_finished = True
+                    if tanks[0].bonus != 'SHIELD':
+                        print("Победил игрок 2")
+                        level_finished = True
+                    else:
+                        tanks[0].bonus = 'NONE'
+                        b.r[0] -= b.v[0] * 5
+                        b.r[1] -= b.v[1] * 5
+                        b.v[0] *= -1
+                        b.v[1] *= -1
 
             for w in walls:
                 if isinstance(w, BreakableWall):
@@ -285,6 +337,23 @@ def main():
             if timer2 % 200 == 0:
                 if tanks[1].charges < 5:
                     tanks[1].charges += 1
+
+            bonus_timer += 1
+            if bonus_timer % 1500 == 0:
+                chance = [0, 0]
+                while field[chance[0]][chance[1]] == 1:
+                    chance[0] = random.choice(range(len(field)))
+                    chance[1] = random.choice(range(len(field[0])))
+                var = random.choice(['SHIELD', 'TRIPLESHOT', 'LASER'])
+                bonuses.append(objects.Bonus((chance[1] + 0.5) * block_size, (chance[0] + 0.5) * block_size, var))
+
+            for bonus in bonuses:
+                draw_bonus(screen, bonus)
+                for t in tanks:
+                    if bonus_pick(t, bonus):
+                        t.bonus = bonus.var
+                        bonuses.remove(bonus)
+
 
 if __name__ == "__main__":
     main_menu(screen)

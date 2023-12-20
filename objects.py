@@ -18,6 +18,7 @@ class Tank:
         self.moving_back = False
         self.turning_left = False
         self.turning_right = False
+        self.bonus = 'NONE'
 
 
 class Bullet:
@@ -27,5 +28,8 @@ class Bullet:
         self.v = v  # Двумерный вектор со скоростями по осям
         self.life = 2
 
-    def draw(self, screen, color):
-        pygame.draw.circle(screen, color, (self.r[0], self.r[1]), self.scale)
+
+class Bonus:
+    def __init__(self, x, y, var):
+        self.r = [x, y]
+        self.var = var  # Тип бонуса
