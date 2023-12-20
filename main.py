@@ -11,7 +11,7 @@ clock = pygame.time.Clock()
 screen = pygame.display.set_mode((screen_width, screen_height))
 menu_background = pygame.image.load("menu_pics/settings.jpg")
 settings_background = pygame.image.load("menu_pics/settings.jpg")
-
+vol=1.0
 
 pygame.mixer.music.load("music/music_path.mp3")
 play_music = None
@@ -20,7 +20,7 @@ play_music = None
 
 
 class Image_Button():
-    def __init__(self, x, y, width, height, image_path, hover_image_path, sound_path=None):
+    def __init__(self, x, y, width, height, image_path, hover_image_path, sound_path="music/knopka-klik-myagkii-blizkii-nizkii.wav"):
         self.x = x  # координата х верхнего левого угла
         self.y = y  # координата у левого верхнего угла
         self.width = width  # размер по горизонтали
@@ -30,7 +30,7 @@ class Image_Button():
         self.hover_image = pygame.image.load(hover_image_path)
         self.hover_image = pygame.transform.scale(self.hover_image, (width, height))
         self.rect = self.image.get_rect(topleft=(x, y))
-        self.sound = None
+        self.sound = pygame.mixer.Sound(sound_path)
         self.is_hovered = False
 
     def draw(self, screen):
@@ -49,7 +49,7 @@ class Image_Button():
 """Функция, отображающая главное меню"""
 
 
-def main_menu(screen, play_music):
+def main_menu(screen, play_music,vol):
     if play_music == None:
         play_music = 1
     if play_music == 1:
@@ -78,7 +78,7 @@ def main_menu(screen, play_music):
             for button in buttons:
                 button.handle_event(event)
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and settings_button.is_hovered:
-                settings_menu(screen,play_music)
+                settings_menu(screen,play_music,vol)
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and quit_button.is_hovered:
                 running = False
                 pygame.quit()
@@ -90,7 +90,7 @@ def main_menu(screen, play_music):
         pygame.display.flip()
 
 
-def settings_menu(screen,play_music):
+def settings_menu(screen,play_music,vol):
 
     normal_mute_button = "menu_pics/playing_mute_button.png"
     muted_mute_button = "menu_pics/muted_button.png"
@@ -102,9 +102,14 @@ def settings_menu(screen,play_music):
         mute_button = muted_mute_button
     back_button = Image_Button(screen_width / 2 - 150 / 2, 500, 150, 74, "menu_pics/button_back.png",
                                "menu_pics/hovered_button_back.png")
-    mute_button=Image_Button(screen_width / 2 - 150 / 2, 400, 150, 74, mute_button,
+    mute_button=Image_Button(screen_width / 2 - 150 / 2, 50, 150, 74, mute_button,
                              "menu_pics/hovered_mute_button.png")
-    buttons = [back_button,mute_button]
+    plus_button=Image_Button(screen_width / 2 - 120 , 150, 100, 74, "menu_pics/plus_button.png",
+                             "menu_pics/plus_button.png")
+    minus_button = Image_Button(screen_width / 2 , 181, 100, 12, "menu_pics/button_of_minus.png",
+                               "menu_pics/button_of_minus.png")
+
+    buttons = [back_button,mute_button,plus_button,minus_button]
     running = True
     while running:
         screen.fill((0, 0, 0))
@@ -117,7 +122,7 @@ def settings_menu(screen,play_music):
             for button in buttons:
                 button.handle_event(event)
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and back_button.is_hovered:
-                main_menu(screen, play_music)
+                main_menu(screen, play_music,vol)
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and mute_button.is_hovered:
                 if play_music:
                     pygame.mixer.music.pause()
@@ -125,6 +130,12 @@ def settings_menu(screen,play_music):
                 else:
                     pygame.mixer.music.unpause()
                     play_music = 2
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and plus_button.is_hovered:
+                vol += 0.1
+                pygame.mixer.music.set_volume(vol)
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and minus_button.is_hovered:
+                vol -= 0.1
+                pygame.mixer.music.set_volume(vol)
 
         for button in buttons:
             button.check_hover(pygame.mouse.get_pos())
@@ -555,4 +566,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main_menu(screen, play_music)
+    main_menu(screen, play_music,vol)
