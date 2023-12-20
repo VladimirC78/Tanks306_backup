@@ -350,6 +350,7 @@ def main():
                 if check_hit(tanks[1], b):
                     if tanks[1].bonus != 'SHIELD':
                         tanks[1].hp -= 1
+                        bullets1.remove(b)
                     else:
                         tanks[1].bonus = 'NONE'
                         b.r[0] -= b.v[0] * 5
@@ -365,6 +366,7 @@ def main():
                 if check_hit(tanks[0], b):
                     if tanks[0].bonus != 'SHIELD':
                         tanks[0].hp -= 1
+                        bullets2.remove(b)
                     else:
                         tanks[0].bonus = 'NONE'
                         b.r[0] -= b.v[0] * 5
