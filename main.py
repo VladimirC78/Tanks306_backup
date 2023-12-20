@@ -105,16 +105,18 @@ def settings_menu(screen):
         pygame.display.flip()
 
 def draw_text(surf, text, size, x, y):
-    font = pygame.font.Font((pygame.font.match_font('arial')), size)
+    font = pygame.font.Font((pygame.font.match_font('ink free')), size)
     text_surface = font.render(text, True, (255,0,0))
     text_rect = text_surface.get_rect()
     text_rect.midtop = (x, y)
     surf.blit(text_surface, text_rect)
 
-def perexod():
+def perexod(slova,slova2):
     dead = pygame.image.load("menu_pics/dead.jpg")
     screen.blit(dead, (180,80))
     draw_text(screen, "GAME OVER", 120, 1200 / 2, 800 / 4)
+    draw_text(screen, slova, 50,1200 / 2, 800 / 2)
+    draw_text(screen, slova2,50,1200 / 2, 800 * 5 / 8)
     draw_text(screen, "Press F key to begin", 30, 1200 / 2, 800 * 3 / 4)
     pygame.display.flip()
     # for event in pygame.event.get():
@@ -140,6 +142,8 @@ def main():
     imgs = [bonus_shield, bonus_triple, bonus_laser]
     game_finished = False
     level_finished = False
+    p1=0
+    p2=0
     while not game_finished:
         if level_finished:
             for event in pygame.event.get():
@@ -149,7 +153,7 @@ def main():
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_f:
                         level_finished = False
-            perexod()
+            perexod(slova,slova2)
         else:
             screen.fill((255, 255, 255))
             walls, field, block_size = create_new_map()
@@ -408,12 +412,16 @@ def main():
                     dead_timer1 += 1
                     if dead_timer1 >= 30:
                         level_finished = True
-                        print('Player 2 win')
+                        slova='Player 2 win'
+                        p2+=1
+                        slova2= f'Score: P1: {p1}, P2: {p2}'
                 elif tanks[1].hp <= 0:
                     dead_timer2 += 1
                     if dead_timer2 >= 30:
                         level_finished = True
-                        print('Player 1 win')
+                        slova='Player 1 win'
+                        p1+=1
+                        slova2= f'Score: P1: {p1}, P2: {p2}'
 
 
                 for w in walls:
