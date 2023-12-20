@@ -105,6 +105,9 @@ def main():
     screen = pygame.display.set_mode((1200, 800))
     walls_back = pygame.image.load("stena.jpg")
     tile = pygame.image.load('tile.jpg')
+    breakable_wall1 = pygame.image.load('breakable_wall1.png')
+    breakable_wall2 = pygame.image.load('breakable_wall2.png')
+    breakable_wall3 = pygame.image.load('breakable_wall3.png')
 
     game_finished = False
     while not game_finished:
@@ -118,10 +121,10 @@ def main():
         timer = 0
         for i in range(len(field)):
             for j in range(len(field[i])):
-                if field[i][j] == 0 or field[i][j] == 2:
-                    screen.blit(tile, (block_size * j, block_size * i))
-                if field[i][j] == 1:
-                    screen.blit(walls_back, (block_size * j, block_size * i))
+                # if field[i][j] == 0 or field[i][j] == 2:
+                #     screen.blit(tile, (block_size * j, block_size * i))
+                # if field[i][j] == 1:
+                #     screen.blit(walls_back, (block_size * j, block_size * i))
                 if field[i][j] == 2:
                     if not flag:
                         tanks.append(objects.Tank(block_size * j, block_size * i, block_size, 1))
@@ -133,10 +136,18 @@ def main():
             screen.fill((255, 255, 255))
             for i in range(len(field)):
                 for j in range(len(field[i])):
-                    if field[i][j] == 1:
-                        screen.blit(walls_back, (block_size * j, block_size * i))
                     if field[i][j] == 0 or field[i][j] == 2:
                         screen.blit(tile, (block_size * j, block_size * i))
+            for w in walls:
+                if isinstance(w, BreakableWall):
+                    if w.hp == 2:
+                        screen.blit(breakable_wall1, (w.r[0] - 0.5 * w.block_size, w.r[1] - 0.5 * w.block_size))
+                    elif w.hp == 1:
+                        screen.blit(breakable_wall2, (w.r[0] - 0.5 * w.block_size, w.r[1] - 0.5 * w.block_size))
+                    elif w.hp == 0:
+                        screen.blit(breakable_wall3, (w.r[0] - 0.5 * w.block_size, w.r[1] - 0.5 * w.block_size))
+                else:
+                    screen.blit(walls_back, (w.r[0] - 0.5 * w.block_size, w.r[1] - 0.5 * w.block_size))
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -254,8 +265,14 @@ def main():
                 if check_hit(tanks[0], b):
                     print("Победил игрок 2")
                     level_finished = True
-            # clock.tick(FPS)
+
+            for w in walls:
+                if isinstance(w, BreakableWall):
+                    if w.hp < 0:
+                        field[int((w.r[1] - 0.5 * w.block_size) // w.block_size)][int((w.r[0] - 0.5 * w.block_size) // w.block_size)] = 0
+                        walls.remove(w)
             timer += 1
+
 
 
 if __name__ == "__main__":

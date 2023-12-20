@@ -9,41 +9,18 @@ import objects
 map_number = len(Levels_encoded.fields)
 
 
-def calculate_distance(place1, place2):
-    # Рассчитывает расстояние между двумя объектами, например, между танком и стеной
-    return place1[0] - place2[0], place1[1] - place2[1]
-
-
-def segment_distance(x, y, x1, y1, x2, y2):  # Рассчитывает расстояние между точкой (х, у) и отрезком (х1, у1, х2, у2)
-    v1 = np.array([x - x1, y - y1])
-    v2 = np.array([x - x2, y - y2])
-    v3 = np.array([x2 - x1, y2 - y1])
-    v4 = -v3
-
-    prod1 = np.dot(v1, v3)
-    prod2 = np.dot(v2, v4)
-
-    if prod1 * prod2 < 0:
-        return min(((x - x1) ** 2 + (y - y1) ** 2) ** 0.5, ((x - x2) ** 2 + (y - y2) ** 2) ** 0.5)
-    else:
-        if x2 != x1:
-            k = (y2 - y1) / (x2 - x1)
-            b1 = y1 - k * x1
-            return abs(y - k * x - b1) / (k ** 2 + 1) ** 0.5
-        else:
-            return abs(x - x1)
-
-
 def create_walls(field, block_size):
     # Создает стены
     walls = []
+    breakable_walls = field
     for i in range(len(field)):
         for j in range(len(field[i])):
             if field[i][j] == 1:
                 chance = random.choice(range(100))
-                if chance <= 20:
+                if chance <= 25 and i != 0 and j != 0 and i != len(field) - 1 and j != len(field[0]) - 1:
                     walls.append(BreakableWall(block_size, (j + 0.5) * block_size, (i + 0.5) * block_size))
-                walls.append(Wall(block_size, (j + 0.5) * block_size, (i + 0.5) * block_size))
+                else:
+                    walls.append(Wall(block_size, (j + 0.5) * block_size, (i + 0.5) * block_size))
 
     return walls
 
@@ -93,6 +70,10 @@ class Wall:
                 self.hit_dict['u'] = True
             if bot_rect.collidepoint(obj.r):
                 self.hit_dict['d'] = True
+            if isinstance(self, BreakableWall):
+                if self.hit_dict['l'] or self.hit_dict['r'] or self.hit_dict['u'] or self.hit_dict['d']:
+                    self.hp -= 1
+
         elif isinstance(obj, objects.Tank):
             wall_top_rect = pygame.Rect(self.rect.topleft[0], self.rect.topleft[1] - 1, self.block_size, 1)
             wall_bot_rect = pygame.Rect(self.rect.bottomleft[0], self.rect.bottomleft[1], self.block_size, 1)

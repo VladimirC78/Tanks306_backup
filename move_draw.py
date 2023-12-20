@@ -1,6 +1,7 @@
 from load_hitbox import *
 import math
 
+
 def bullet_move(obj, walls):
     for wall in walls:
         hit_dict = wall.wall_hit(obj)
