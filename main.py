@@ -1,7 +1,6 @@
-import pygame
 import sys
+
 from load_hitbox import *
-import objects
 from move_draw import move_tank, bullet_move
 
 """Нужно будет загрузить картинки и звуки в папку проекта, image path  и ему подобные - переменные, в которые 

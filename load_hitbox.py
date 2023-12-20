@@ -1,13 +1,12 @@
 import random
-import Levels_encoded
 
-import objects
 import numpy as np
-import math
 import pygame
 
-map_number = len(Levels_encoded.fields)
+import Levels_encoded
+import objects
 
+map_number = len(Levels_encoded.fields)
 
 
 def calculate_distance(place1, place2):
@@ -35,14 +34,16 @@ def segment_distance(x, y, x1, y1, x2, y2):  # Рассчитывает расс
             return abs(x - x1)
 
 
-
 def create_walls(field, block_size):
     # Создает стены
     walls = []
     for i in range(len(field)):
         for j in range(len(field[i])):
             if field[i][j] == 1:
-                walls.append(Wall(block_size, j * block_size + block_size * 0.5, i * block_size + block_size * 0.5))
+                chance = random.choice(range(100))
+                if chance <= 20:
+                    walls.append(BreakableWall(block_size, (j + 0.5) * block_size, (i + 0.5) * block_size))
+                walls.append(Wall(block_size, (j + 0.5) * block_size, (i + 0.5) * block_size))
 
     return walls
 
@@ -54,6 +55,7 @@ def create_new_map():
     block_size = scale_factor
     walls = create_walls(field, block_size)
     return walls, field, block_size
+
 
 def check_hit(obj1, obj2):
     x1 = obj1.rect.topleft[0] - obj2.scale
@@ -118,3 +120,10 @@ class Wall:
         return self.hit_dict
 
 
+class BreakableWall(Wall):
+    def __init__(self, block_size, x, y):
+        self.block_size = block_size
+        self.r = list([x, y])
+        self.hit_dict = {'u': False, 'd': False, 'r': False, 'l': False}
+        self.rect = pygame.Rect(x - block_size * 0.5, y - block_size * 0.5, block_size, block_size)
+        self.hp = 2

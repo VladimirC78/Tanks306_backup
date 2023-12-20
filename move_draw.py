@@ -1,6 +1,4 @@
 # TODO здесь нужно написать функции, меняющие координаты объектов, а так же рисующие их
-import pygame
-import numpy as np
 from load_hitbox import *
 
 
