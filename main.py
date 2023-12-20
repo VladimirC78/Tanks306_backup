@@ -323,6 +323,7 @@ def main():
                                                                5))
                         elif event.key == pygame.K_SPACE:
                             if tanks[1].bonus == 'TRIPLESHOT':
+                                sound_of_bullet.play()
                                 # Тройной выстрел - создаются 2 дополнительные пули под одинаковым углом
                                 # к основному направлению
                                 bullets2.append(objects.Bullet(r_center1[0], r_center1[1],
@@ -373,6 +374,7 @@ def main():
                                                                5))
                         elif event.key == pygame.K_q:
                             if tanks[0].bonus == 'TRIPLESHOT':
+                                sound_of_bullet.play()
                                 bullets1.append(objects.Bullet(r_center0[0], r_center0[1],
                                                                [-v_bullet * np.sin(tanks[0].ang), -v_bullet * np.cos(tanks[0].ang)],
                                                                5))
@@ -505,6 +507,7 @@ def main():
                     if check_hit(tanks[1], b):
                         if tanks[1].bonus != 'SHIELD':
                             tanks[1].hp -= 1
+
                             bullets1.remove(b)
                         else:
                             tanks[1].bonus = 'NONE'
