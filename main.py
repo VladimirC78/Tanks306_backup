@@ -482,7 +482,7 @@ def main():
 
                 # Появление бонуса через равные интервалы времени
                 bonus_timer += 1
-                if bonus_timer % 1500 == 0:
+                if bonus_timer % 1500 == 0 and len(bonuses) <= 5:
                     chance = [0, 0]
                     while field[chance[0]][chance[1]] == 1:
                         chance[0] = random.choice(range(len(field)))
