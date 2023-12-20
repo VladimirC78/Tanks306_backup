@@ -2,12 +2,6 @@ import sys
 
 from move_draw import *
 
-"""Нужно будет загрузить картинки и звуки в папку проекта, image path  и ему подобные - переменные, в которые 
-мы записываем путь на звуки и картинки(если загрузим в проект, то вместо полного пути можно будет использовать просто имя,
-что удобнее) "is_hovered" отвечает за наведение, если конпка мыши находится где-то внутри кнопки, вместо обычной 
-картинки кнопки отображается другая(например, более светлая) "handle_event" отвечает за воспроизведение звука при клике 
-на кнопку
- """
 screen_width = 800
 screen_height = 600
 pygame.init()
@@ -16,6 +10,8 @@ clock = pygame.time.Clock()
 screen = pygame.display.set_mode((screen_width, screen_height))
 menu_background = pygame.image.load("menu_pics/settings.jpg")
 settings_background = pygame.image.load("menu_pics/settings.jpg")
+
+"""Класс кнопок меню"""
 
 
 class Image_Button():
@@ -43,6 +39,9 @@ class Image_Button():
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and self.is_hovered:
             if self.sound:
                 self.sound.play()
+
+
+"""Функция, отображающая главное меню"""
 
 
 def main_menu(screen):
@@ -111,6 +110,9 @@ def draw_text(surf, text, size, x, y):
     surf.blit(text_surface, text_rect)
 
 
+"""Функция, отображающая переход между уровнями при поражении одного из игроков"""
+
+
 def perexod():
     dead = pygame.image.load("menu_pics/dead.jpg")
     screen.blit(dead, (180, 80))
@@ -122,9 +124,11 @@ def perexod():
 
 
 def main():
+    # Параметры игрового окна
     width = 1200
     height = 800
     screen = pygame.display.set_mode((width, height))
+    # Загрузка картинок из папки graphics
     walls_back = pygame.image.load('graphics/stena.jpg')
     tile = pygame.image.load('graphics/tile.jpg')
     breakable_wall1 = pygame.image.load('graphics/breakable_wall1.png')
@@ -136,9 +140,12 @@ def main():
     bonus_triple = pygame.image.load('graphics/bonus_triple.png')
     bonus_laser = pygame.image.load('graphics/bonus_laser.png')
     imgs = [bonus_shield, bonus_triple, bonus_laser]
+
     game_finished = False
     level_finished = False
+
     while not game_finished:
+        # Внешний игровой цикл, с каждой итерацией создает новый уровень
         if level_finished:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -150,19 +157,24 @@ def main():
             perexod()
         else:
             screen.fill((255, 255, 255))
-            walls, field, block_size = create_new_map()
+            walls, field, block_size = create_new_map()  # Основные параметры карты
+            # Массивы объектов
             tanks = []
             bullets1 = []
             bullets2 = []
             bonuses = []
             lasers2 = []
             lasers1 = []
-            dead_timer1 = 0
+
+            dead_timer1 = 0  # Таймеры, запускающиеся после поражения одного из игроков
             dead_timer2 = 0
+
             flag = False
-            timer1 = 0
+
+            timer1 = 0  # Таймеры перезарядки танков
             timer2 = 0
-            bonus_timer = 0
+            bonus_timer = 0  # Таймер появления бонусов
+            # Спавн танков в определенных точках карты
             for i in range(len(field)):
                 for j in range(len(field[i])):
                     if field[i][j] == 2:
@@ -172,8 +184,10 @@ def main():
                         else:
                             tanks.append(objects.Tank(block_size * j, block_size * i, block_size, 2))
             while not level_finished:
+                # Игровой цикл уровня
                 pygame.display.update()
                 screen.fill((255, 255, 255))
+                # Отрисовка карты
                 for i in range(len(field)):
                     for j in range(len(field[i])):
                         if field[i][j] == 0 or field[i][j] == 2:
@@ -189,6 +203,7 @@ def main():
                     else:
                         screen.blit(walls_back, (w.r[0] - 0.5 * w.block_size, w.r[1] - 0.5 * w.block_size))
 
+                # Элементы интерфейса - количество выстрелов и наличие щита у игрока
                 for i in range(tanks[0].charges):
                     screen.blit(bullet_sign, (i * 16 + 20, 20))
 
@@ -200,16 +215,19 @@ def main():
                 if tanks[1].bonus == 'SHIELD':
                     screen.blit(shield_sign, (1122, 55))
 
+                # Мониторинг событий
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         pygame.quit()
                         sys.exit()
                     if event.type == pygame.KEYDOWN:
+                        # Вычисление положения дула танка в момент выстрела
                         r_center1 = [tanks[1].r[0] + 0.5 * tanks[1].scale * np.sin(-tanks[1].ang),
                                      tanks[1].r[1] - 0.5 * tanks[1].scale * np.cos(-tanks[1].ang)]
                         r_center0 = [tanks[0].r[0] + 0.5 * tanks[0].scale * np.sin(-tanks[0].ang),
                                      tanks[0].r[1] - 0.5 * tanks[0].scale * np.cos(-tanks[0].ang)]
                         if event.key == pygame.K_SPACE and (tanks[1].bonus == 'NONE' or tanks[1].bonus == 'SHIELD'):
+                            # Обычный выстрел - если не подобраны бонусы вроде лазера или тройного выстрела
                             if tanks[1].charges > 0:
                                 tanks[1].charges -= 1
                                 timer2 = 0
@@ -218,6 +236,8 @@ def main():
                                                                5))
                         elif event.key == pygame.K_SPACE:
                             if tanks[1].bonus == 'TRIPLESHOT':
+                                # Тройной выстрел - создаются 2 дополнительные пули под одинаковым углом
+                                # к основному направлению
                                 bullets2.append(objects.Bullet(r_center1[0], r_center1[1],
                                                                [-4 * np.sin(tanks[1].ang), -4 * np.cos(tanks[1].ang)],
                                                                5))
@@ -230,6 +250,8 @@ def main():
                                 tanks[1].bonus = 'NONE'
 
                             elif tanks[1].bonus == 'LASER':
+                                # Расчет положения конечной точки отрезка в зависимости от угла поворота и координат
+                                # танка
                                 if np.sin(-tanks[1].ang) > 0:
                                     y_edge = r_center1[1] - (width - r_center1[0]) / np.tan(-tanks[1].ang)
                                 elif np.sin(-tanks[1].ang) == 0 and np.cos(-tanks[1].ang) == -1:
@@ -250,6 +272,8 @@ def main():
                                         end = [width, y_edge]
                                 lasers2.append(objects.Laser(r_center1, end))
                                 tanks[1].bonus = 'NONE'
+
+                        # Аналогично для другого танка
 
                         if event.key == pygame.K_q and (tanks[0].bonus == 'NONE' or tanks[0].bonus == 'SHIELD'):
                             if tanks[0].charges > 0:
@@ -293,6 +317,8 @@ def main():
                                 lasers1.append(objects.Laser(r_center0, end))
                                 tanks[0].bonus = 'NONE'
 
+                        # Изменение статуса танка при нажатии на клавиши движения
+
                         if event.key == pygame.K_w:
                             tanks[0].moving_front = True
                         if event.key == pygame.K_s:
@@ -309,6 +335,9 @@ def main():
                             tanks[1].turning_left = True
                         if event.key == pygame.K_RIGHT:
                             tanks[1].turning_right = True
+
+                    # Остановка танка при отпускании клавиш движения
+
                     if event.type == pygame.KEYUP:
                         if event.key == pygame.K_w or event.key == pygame.K_s:
                             tanks[0].moving_front = False
@@ -324,6 +353,9 @@ def main():
                             tanks[1].turning_left = False
 
                 for t in tanks:
+                    # Передвижение танков в зависимости от взаимного расположения со стенами
+                    # Используется функция move_tank из move_draw, vx и vy меняются в зависимости от наличия
+                    # стен поблизости
                     t.rect = draw_tank(t, screen)
                     vx = 1
                     vy = 1
@@ -375,6 +407,7 @@ def main():
                     move_tank(t, vx, vy)
 
                 for b in bullets1:
+                    # Передвижение, отрисовка и проверка пули на попадание
                     bullet_draw(screen, (255, 0, 0), b)
                     bullet_move(b, walls)
                     if b.life < 0:
@@ -406,6 +439,7 @@ def main():
                             b.v[0] *= -1
                             b.v[1] *= -1
 
+                # Завершение уровня после поражения одного из игроков
                 if tanks[0].hp <= 0:
                     dead_timer1 += 1
                     if dead_timer1 >= 30:
@@ -417,12 +451,15 @@ def main():
                         level_finished = True
                         print('Player 1 win')
 
+                # Удаление разбитой стены
                 for w in walls:
                     if isinstance(w, BreakableWall):
                         if w.hp < 0:
                             field[int((w.r[1] - 0.5 * w.block_size) // w.block_size)][
                                 int((w.r[0] - 0.5 * w.block_size) // w.block_size)] = 0
                             walls.remove(w)
+
+                # Перезарядка со временем
                 if tanks[0].charges < 5:
                     timer1 += 1
                 if tanks[1].charges < 5:
@@ -435,8 +472,9 @@ def main():
                     if tanks[1].charges < 5:
                         tanks[1].charges += 1
 
+                # Появление бонуса через равные интервалы времени
                 bonus_timer += 1
-                if bonus_timer % 1500 == 0:
+                if bonus_timer % 500 == 0:
                     chance = [0, 0]
                     while field[chance[0]][chance[1]] == 1:
                         chance[0] = random.choice(range(len(field)))
@@ -444,6 +482,7 @@ def main():
                     var = random.choice(['SHIELD', 'TRIPLESHOT', 'LASER'])
                     bonuses.append(objects.Bonus((chance[1] + 0.5) * block_size, (chance[0] + 0.5) * block_size, var))
 
+                # Отрисовка и обработка подбирания бонуса
                 for bonus in bonuses:
                     draw_bonus(screen, bonus, imgs)
                     for t in tanks:
@@ -451,6 +490,7 @@ def main():
                             t.bonus = bonus.var
                             bonuses.remove(bonus)
 
+                # Отрисовка и проверка попадания лазера
                 for laser in lasers2:
                     draw_laser(screen, laser, (0, 0, 255))
                     laser.life_time -= 1
