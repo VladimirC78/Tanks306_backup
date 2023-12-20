@@ -2,12 +2,6 @@ import pygame
 import math
 
 
-def rot_center(image, rect, angle):
-    rot_image = pygame.transform.rotate(image, angle)
-    rot_rect = rot_image.get_rect(center=rect.center)
-    return rot_image, rot_rect
-
-
 class Tank:
     def __init__(self, x, y, scale, type):
         self.type = type
@@ -25,27 +19,6 @@ class Tank:
         self.turning_left = False
         self.turning_right = False
 
-    # def tank_check_hit(self, walls):
-    #     l, r, u, d = False, False, False, False
-    #     for wall in walls:
-    #         if wall.wall_hit(self)["l"]:
-    #             l = True
-    #         if wall.wall_hit(self)["r"]:
-    #             r = True
-    #         if wall.wall_hit(self)["u"]:
-    #             u = True
-    #         if wall.wall_hit(self)["d"]:
-    #             d = True
-    #     self.tank_hit_walls = {'u': u, 'd': d, 'r': r, 'l': l}
-    #     return self.tank_hit_walls
-
-    def draw(self, screen):
-        image = pygame.transform.scale(pygame.image.load('tank_alt.png'), (self.scale, self.scale))
-        rect = image.get_rect(center=(self.r[0], self.r[1]))
-        surf, r = rot_center(image, rect, self.ang * 180 / math.pi)
-        screen.blit(surf, r)
-        return rect
-
 
 class Bullet:
     def __init__(self, x, y, v, scale):
@@ -56,4 +29,3 @@ class Bullet:
 
     def draw(self, screen, color):
         pygame.draw.circle(screen, color, (self.r[0], self.r[1]), self.scale)
-

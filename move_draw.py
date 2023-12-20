@@ -1,6 +1,5 @@
-# TODO здесь нужно написать функции, меняющие координаты объектов, а так же рисующие их
 from load_hitbox import *
-
+import math
 
 def bullet_move(obj, walls):
     for wall in walls:
@@ -67,6 +66,19 @@ def bullet_move(obj, walls):
 #     if (obj.tank_check_hit(walls)["u"] == obj.tank_check_hit(walls)["d"]) and not obj.tank_check_hit(walls)[
 #         "d"]:
 #         obj.r[1] += obj.v * np.cos(obj.ang)
+
+def rot_center(image, rect, angle):
+    rot_image = pygame.transform.rotate(image, angle)
+    rot_rect = rot_image.get_rect(center=rect.center)
+    return rot_image, rot_rect
+
+
+def draw_tank(obj, screen):
+    image = pygame.transform.scale(pygame.image.load('tank_alt.png'), (obj.scale, obj.scale))
+    rect = image.get_rect(center=(obj.r[0], obj.r[1]))
+    surf, r = rot_center(image, rect, obj.ang * 180 / math.pi)
+    screen.blit(surf, r)
+    return rect
 
 
 def move_tank(obj, vx, vy):

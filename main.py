@@ -1,7 +1,6 @@
 import sys
 
-from load_hitbox import *
-from move_draw import move_tank, bullet_move
+from move_draw import *
 
 """Нужно будет загрузить картинки и звуки в папку проекта, image path  и ему подобные - переменные, в которые 
 мы записываем путь на звуки и картинки(если загрузим в проект, то вместо полного пути можно будет использовать просто имя,
@@ -116,6 +115,7 @@ def main():
         bullets1 = []
         bullets2 = []
         flag = False
+        timer = 0
         for i in range(len(field)):
             for j in range(len(field[i])):
                 if field[i][j] == 0 or field[i][j] == 2:
@@ -187,7 +187,7 @@ def main():
                         tanks[1].turning_left = False
 
             for t in tanks:
-                t.rect = t.draw(screen)
+                t.rect = draw_tank(t, screen)
                 vx = 1
                 vy = 1
                 for w in walls:
@@ -255,6 +255,7 @@ def main():
                     print("Победил игрок 2")
                     level_finished = True
             # clock.tick(FPS)
+            timer += 1
 
 
 if __name__ == "__main__":
