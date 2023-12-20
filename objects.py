@@ -1,5 +1,9 @@
+
+"""В этом файле описаны все игровые объекты кроме стен"""
+
 import pygame
-import math
+
+"""Класс танка, каждый объект задается своим начальным положением """
 
 
 class Tank:
@@ -8,18 +12,21 @@ class Tank:
         self.r = list([x, y])  # Координаты танка по осям х и у
         self.scale = scale  # Характерный размер танка
         self.v = [0, 0]  # Вектор скорости
-        self.omega = 0.02
+        self.omega = 0.02  # Угловая скорость при поворотах
         self.ang = 0  # Изначально танк направлен вправо, угол в радианах и отсчитывается по часовой стрелке
-        self.charges = 5
-        self.tank_hit_walls = {'u': False, 'd': False, 'r': False, 'l': False}
-        self.live = 1  # жизнь танка
+        self.charges = 5  # Количество выстрелов
+        # Хитбокс танка
         self.rect = pygame.Rect(self.r[0] - self.scale * 0.5, self.r[1] - self.scale * 0.5, self.scale, self.scale)
+        # Параметры движения танка
         self.moving_front = False
         self.moving_back = False
         self.turning_left = False
         self.turning_right = False
-        self.bonus = 'NONE'
-        self.hp = 1
+        self.bonus = 'NONE'  # Информация о подобранном бонусе
+        self.hp = 1  # Количество жизней, по умолчанию танк переживает 1 попадание
+
+
+"""Класс пули, элементы задаются начальным положением и радиусом пули"""
 
 
 class Bullet:
@@ -27,7 +34,10 @@ class Bullet:
         self.r = list([x, y])  # Координаты танка по осям х и у
         self.scale = scale  # Радиус пули
         self.v = v  # Двумерный вектор со скоростями по осям
-        self.life = 2
+        self.life = 2  # Количество отскоков от стен прежде чем пуля исчезнет
+
+
+"""Класс бонусов, элементы задаются положением (статичное) и типом бонуса"""
 
 
 class Bonus:
@@ -36,9 +46,12 @@ class Bonus:
         self.var = var  # Тип бонуса
 
 
+"""Класс лазер, задается начальной и конечной точкой"""
+
+
 class Laser:
     def __init__(self, r, end):
-        self.r = r
-        self.end = end
-        self.life_time = 30
-        self.width = 10
+        self.r = r  # Начальная точка
+        self.end = end  # Конечная точка
+        self.life_time = 30  # Время, на протяжение которого лазер существует
+        self.width = 10  # Толщина лазера

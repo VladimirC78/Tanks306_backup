@@ -1,5 +1,11 @@
+
+"""Этот файл отвечает за изменение координат и отрисовку всех игровых объектов кроме стен"""
+
 from load_hitbox import *
 import math
+import numpy as np
+
+"""Функция, передвигающая пулю, принимает на вход данные о пуле и стенах карты"""
 
 
 def bullet_move(obj, walls):
@@ -7,6 +13,9 @@ def bullet_move(obj, walls):
         hit_dict = wall.wall_hit(obj)
         if hit_dict['l'] or hit_dict['r'] or hit_dict['u'] or hit_dict['d']:
             obj.life -= 1
+
+        # Изменение скорости пули в зависимости от стороны, с которой она налетает на стену
+
         if hit_dict["l"]:
             obj.v[0] *= -1
             obj.r[0] = wall.r[0] - wall.block_size * 0.6 - obj.scale
@@ -22,13 +31,16 @@ def bullet_move(obj, walls):
 
     obj.r[0] += obj.v[0]
     obj.r[1] += obj.v[1]
-    """Пока вот так прописала условие столкновения пули и стены. НО есть риск, что пуля будет застревать на стенах
-        , как тогда в пушке, если дополнительно пулю не отдалить от стены, но это уже нужно сделать после того,
-       как игра сможет запуститься """
+
+
+"""Отрисовка пули"""
 
 
 def bullet_draw(screen, color, obj):
     pygame.draw.circle(screen, color, (obj.r[0], obj.r[1]), obj.scale)
+
+
+"""Отрисовка бонуса, принимает на вход данные бонуса и набор картинок бонусов"""
 
 
 def draw_bonus(screen, obj, imgs):
@@ -40,56 +52,25 @@ def draw_bonus(screen, obj, imgs):
         screen.blit(imgs[0], (obj.r[0] - 20, obj.r[1] - 20))
 
 
-def draw_laser(screen, obj):
-    pygame.draw.line(screen, (0, 0, 255), [obj.r[0], obj.r[1]], [obj.end[0], obj.end[1]], obj.width)
+"""Отрисовка лазеров, изображает их в виде толстого луча заданного цвета"""
 
 
-
-# def motion_up(obj,
-#               walls):  # движение вверх с учетом столкновения танка со стенами в карте(у танка теперь есть свой словарь)
-#     if obj.tank_check_hit(walls)["l"]:
-#         if np.sin(obj.ang) <= 0:
-#             obj.r[0] -= obj.v * np.sin(obj.ang)
-#     if obj.tank_check_hit(walls)["r"]:
-#         if np.sin(obj.ang) >= 0:
-#             obj.r[0] -= obj.v * np.sin(obj.ang)
-#     if (obj.tank_check_hit(walls)["r"] == obj.tank_check_hit(walls)["l"]) and obj.tank_check_hit(walls)["r"] == False:
-#         obj.r[0] -= obj.v * np.sin(obj.ang)
-#     if obj.tank_check_hit(walls)["u"]:
-#         if np.cos(obj.ang) <= 0:
-#             obj.r[1] -= obj.v * np.cos(obj.ang)
-#     if obj.tank_check_hit(walls)["d"]:
-#         if np.cos(obj.ang) >= 0:
-#             obj.r[1] -= obj.v * np.cos(obj.ang)
-#     if (obj.tank_check_hit(walls)["u"] == obj.tank_check_hit(walls)["d"]) and obj.tank_check_hit(walls)["d"] == False:
-#         obj.r[1] -= obj.v * np.cos(obj.ang)
+def draw_laser(screen, obj, color):
+    col = color
+    pygame.draw.line(screen, col, [obj.r[0], obj.r[1]], [obj.end[0], obj.end[1]], obj.width)
 
 
-# def motion_down(obj, walls):
-#     if obj.tank_check_hit(walls)["l"]:
-#         if np.sin(obj.ang) >= 0:
-#             obj.r[0] += obj.v * np.sin(obj.ang)
-#     if obj.tank_check_hit(walls)["r"]:
-#         if np.sin(obj.ang) <= 0:
-#             obj.r[0] += obj.v * np.sin(obj.ang)
-#     if (obj.tank_check_hit(walls)["r"] == obj.tank_check_hit(walls)["l"]) and not obj.tank_check_hit(walls)[
-#         "r"]:
-#         obj.r[0] += obj.v * np.sin(obj.ang)
-#
-#     if obj.tank_check_hit(walls)["u"]:
-#         if np.cos(obj.ang) >= 0:
-#             obj.r[1] += obj.v * np.cos(obj.ang)
-#     if obj.tank_check_hit(walls)["d"]:
-#         if np.cos(obj.ang) <= 0:
-#             obj.r[1] += obj.v * np.cos(obj.ang)
-#     if (obj.tank_check_hit(walls)["u"] == obj.tank_check_hit(walls)["d"]) and not obj.tank_check_hit(walls)[
-#         "d"]:
-#         obj.r[1] += obj.v * np.cos(obj.ang)
+"""Вращение картинки танка, принимает на вход картинку, связанный с ней прямоугольник и угол поворота, 
+возвращает повернутую картинку и связанный с ней прямоугольник"""
+
 
 def rot_center(image, rect, angle):
     rot_image = pygame.transform.rotate(image, angle)
     rot_rect = rot_image.get_rect(center=rect.center)
     return rot_image, rot_rect
+
+
+"""Отрисовка танка в зависимости от угла поворота, использует данные из функции выше"""
 
 
 def draw_tank(obj, screen):
@@ -98,6 +79,9 @@ def draw_tank(obj, screen):
     surf, r = rot_center(image, rect, obj.ang * 180 / math.pi)
     screen.blit(surf, r)
     return rect
+
+
+"""Изменение координат танка в зависимости от угла поворота. Косвенно учитываются стены через параметры vx и vy"""
 
 
 def move_tank(obj, vx, vy):
@@ -116,35 +100,3 @@ def move_tank(obj, vx, vy):
 
     obj.r[0] += obj.v[0]
     obj.r[1] += obj.v[1]
-
-
-# def tank_move(obj, walls):
-#     keys = pygame.key.get_pressed()
-#
-#     if obj.type == 1:
-#         if keys[pygame.K_w]:
-#             motion_up(obj, walls)
-#         elif keys[pygame.K_s]:
-#             motion_down(obj, walls)
-#
-#         if keys[pygame.K_a]:
-#             obj.ang += obj.omega
-#         elif keys[pygame.K_d]:
-#             obj.ang -= obj.omega
-#     else:
-#         if keys[pygame.K_UP]:
-#             motion_up(obj, walls)
-#         elif keys[pygame.K_DOWN]:
-#             motion_down(obj, walls)
-#
-#         if keys[pygame.K_LEFT]:
-#             obj.ang += obj.omega
-#         elif keys[pygame.K_RIGHT]:
-#             obj.ang -= obj.omega
-
-
-"""Итог работы: пришлось писать для танка свой словарь столкновений: если он контачит, например, слева, хоть с одной стеной,
-то в соответсвующем ключе у словаря будет значение True. Думаю, лучше это прописать в классе танка, чем прямо здесь
-писать цикл проверки столкновения танка со стенами. Чтобы проверить столкновение, обращаюсь к словарю столкновений, он будет 
-пересчитываться постоянно во время работы программы.С пулей все проще, можно прям в функции написать цикл проверки столновений.
-Вынесла повторяющийся код в функции "motion_up" и "motion_down" """
