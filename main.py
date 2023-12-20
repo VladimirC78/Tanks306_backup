@@ -108,7 +108,7 @@ def main():
     breakable_wall1 = pygame.image.load('breakable_wall1.png')
     breakable_wall2 = pygame.image.load('breakable_wall2.png')
     breakable_wall3 = pygame.image.load('breakable_wall3.png')
-
+    bullet_sign = pygame.image.load('bullet_sign.png')
     game_finished = False
     while not game_finished:
         level_finished = False
@@ -118,13 +118,10 @@ def main():
         bullets1 = []
         bullets2 = []
         flag = False
-        timer = 0
+        timer1 = 0
+        timer2 = 0
         for i in range(len(field)):
             for j in range(len(field[i])):
-                # if field[i][j] == 0 or field[i][j] == 2:
-                #     screen.blit(tile, (block_size * j, block_size * i))
-                # if field[i][j] == 1:
-                #     screen.blit(walls_back, (block_size * j, block_size * i))
                 if field[i][j] == 2:
                     if not flag:
                         tanks.append(objects.Tank(block_size * j, block_size * i, block_size, 1))
@@ -148,25 +145,30 @@ def main():
                         screen.blit(breakable_wall3, (w.r[0] - 0.5 * w.block_size, w.r[1] - 0.5 * w.block_size))
                 else:
                     screen.blit(walls_back, (w.r[0] - 0.5 * w.block_size, w.r[1] - 0.5 * w.block_size))
+
+            for i in range(tanks[0].charges):
+                screen.blit(bullet_sign, (i * 16 + 20, 20))
+
+            for i in range(tanks[1].charges):
+                screen.blit(bullet_sign, (1170 - i * 16, 20))
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
-                        r_center = [tanks[1].r[0] + 0.5 * tanks[1].scale * np.sin(-tanks[1].ang),
-                                    tanks[1].r[1] - 0.5 * tanks[1].scale * np.cos(-tanks[1].ang)]
-                        bullets2.append(
-                            objects.Bullet(r_center[0], r_center[1],
-                                           [-4 * np.sin(tanks[1].ang), -4 * np.cos(tanks[1].ang)],
-                                           5))
+                        if tanks[1].charges > 0:
+                            tanks[1].charges -= 1
+                            timer2 = 0
+                            r_center = [tanks[1].r[0] + 0.5 * tanks[1].scale * np.sin(-tanks[1].ang), tanks[1].r[1] - 0.5 * tanks[1].scale * np.cos(-tanks[1].ang)]
+                            bullets2.append(objects.Bullet(r_center[0], r_center[1], [-4 * np.sin(tanks[1].ang), -4 * np.cos(tanks[1].ang)], 5))
                     if event.key == pygame.K_q:
-                        r_center = [tanks[0].r[0] + 0.5 * tanks[0].scale * np.sin(-tanks[0].ang),
-                                    tanks[0].r[1] - 0.5 * tanks[0].scale * np.cos(-tanks[0].ang)]
-                        bullets1.append(
-                            objects.Bullet(r_center[0], r_center[1],
-                                           [-4 * np.sin(tanks[0].ang), -4 * np.cos(tanks[0].ang)],
-                                           5))
+                        if tanks[0].charges > 0:
+                            tanks[0].charges -= 1
+                            timer1 = 0
+                            r_center = [tanks[0].r[0] + 0.5 * tanks[0].scale * np.sin(-tanks[0].ang), tanks[0].r[1] - 0.5 * tanks[0].scale * np.cos(-tanks[0].ang)]
+                            bullets1.append(objects.Bullet(r_center[0], r_center[1], [-4 * np.sin(tanks[0].ang), -4 * np.cos(tanks[0].ang)], 5))
                     if event.key == pygame.K_w:
                         tanks[0].moving_front = True
                     if event.key == pygame.K_s:
@@ -269,11 +271,20 @@ def main():
             for w in walls:
                 if isinstance(w, BreakableWall):
                     if w.hp < 0:
-                        field[int((w.r[1] - 0.5 * w.block_size) // w.block_size)][int((w.r[0] - 0.5 * w.block_size) // w.block_size)] = 0
+                        field[int((w.r[1] - 0.5 * w.block_size) // w.block_size)][
+                            int((w.r[0] - 0.5 * w.block_size) // w.block_size)] = 0
                         walls.remove(w)
-            timer += 1
+            if tanks[0].charges < 5:
+                timer1 += 1
+            if tanks[1].charges < 5:
+                timer2 += 1
 
-
+            if timer1 % 200 == 0:
+                if tanks[0].charges < 5:
+                    tanks[0].charges += 1
+            if timer2 % 200 == 0:
+                if tanks[1].charges < 5:
+                    tanks[1].charges += 1
 
 if __name__ == "__main__":
     main_menu(screen)
