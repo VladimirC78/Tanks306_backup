@@ -6,6 +6,7 @@ from move_draw import *
 screen_width = 800
 screen_height = 600
 pygame.init()
+pygame.font.init()
 all_sprites = pygame.sprite.Group()
 clock = pygame.time.Clock()
 screen = pygame.display.set_mode((screen_width, screen_height))
@@ -72,12 +73,14 @@ def main_menu(screen, play_music,vol):
                 running = False
                 main()
             if event.type == pygame.QUIT:
+                fade()
                 running = False
                 pygame.quit()
                 sys.exit()
             for button in buttons:
                 button.handle_event(event)
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and settings_button.is_hovered:
+                fade()
                 settings_menu(screen,play_music,vol)
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and quit_button.is_hovered:
                 running = False
@@ -87,6 +90,27 @@ def main_menu(screen, play_music,vol):
         for button in buttons:
             button.check_hover(pygame.mouse.get_pos())
             button.draw(screen)
+        pygame.display.flip()
+
+def fade():
+    running=True
+    fade_alpha=100
+
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+                pygame.quit()
+                sys.exit()
+        fade_surface = pygame.Surface((1200,800))
+        fade_surface.fill((0,0,0))
+        fade_surface.set_alpha(fade_alpha)
+        screen.blit(fade_surface,(0,0))
+
+        fade_alpha+=5
+        if fade_alpha>=200:
+            fade_alpha=255
+            running=False
         pygame.display.flip()
 
 
@@ -110,10 +134,16 @@ def settings_menu(screen,play_music,vol):
                                "menu_pics/button_of_minus.png")
 
     buttons = [back_button,mute_button,plus_button,minus_button]
+    my_font = pygame.font.SysFont('Comic Sans MS', 30)
+
     running = True
     while running:
         screen.fill((0, 0, 0))
         screen.blit(settings_background, (0, 0))
+        if play_music != 0 and vol > 0.01:
+            text = 'Level of Volume ' + str(int(vol * 100)) + " %"
+        else:
+            text= "Level of Volume Mute"
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -122,21 +152,28 @@ def settings_menu(screen,play_music,vol):
             for button in buttons:
                 button.handle_event(event)
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and back_button.is_hovered:
+                fade()
                 main_menu(screen, play_music,vol)
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and mute_button.is_hovered:
                 if play_music:
                     pygame.mixer.music.pause()
                     play_music = 0
+                    text= "Mute"
                 else:
                     pygame.mixer.music.unpause()
                     play_music = 2
+
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and plus_button.is_hovered:
                 vol += 0.1
+
                 pygame.mixer.music.set_volume(vol)
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and minus_button.is_hovered:
                 vol -= 0.1
                 pygame.mixer.music.set_volume(vol)
 
+
+        text_surface = my_font.render(text, False, (255, 255, 255))
+        screen.blit(text_surface, (460, 0))
         for button in buttons:
             button.check_hover(pygame.mouse.get_pos())
             button.draw(screen)
