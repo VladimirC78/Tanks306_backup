@@ -1,6 +1,5 @@
 import sys
 
-
 from move_draw import *
 
 screen_width = 800
@@ -12,7 +11,7 @@ clock = pygame.time.Clock()
 screen = pygame.display.set_mode((screen_width, screen_height))
 menu_background = pygame.image.load("menu_pics/settings.jpg")
 settings_background = pygame.image.load("menu_pics/settings.jpg")
-vol=1.0
+vol = 1.0
 
 pygame.mixer.music.load("music/music_path.mp3")
 play_music = None
@@ -21,7 +20,8 @@ play_music = None
 
 
 class Image_Button():
-    def __init__(self, x, y, width, height, image_path, hover_image_path, sound_path="music/knopka-klik-myagkii-blizkii-nizkii.wav"):
+    def __init__(self, x, y, width, height, image_path, hover_image_path,
+                 sound_path="music/knopka-klik-myagkii-blizkii-nizkii.wav"):
         self.x = x  # координата х верхнего левого угла
         self.y = y  # координата у левого верхнего угла
         self.width = width  # размер по горизонтали
@@ -50,7 +50,7 @@ class Image_Button():
 """Функция, отображающая главное меню"""
 
 
-def main_menu(screen, play_music,vol):
+def main_menu(screen, play_music, vol):
     if play_music == None:
         play_music = 1
     if play_music == 1:
@@ -81,7 +81,7 @@ def main_menu(screen, play_music,vol):
                 button.handle_event(event)
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and settings_button.is_hovered:
                 fade()
-                settings_menu(screen,play_music,vol)
+                settings_menu(screen, play_music, vol)
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and quit_button.is_hovered:
                 running = False
                 pygame.quit()
@@ -92,9 +92,10 @@ def main_menu(screen, play_music,vol):
             button.draw(screen)
         pygame.display.flip()
 
+
 def fade():
-    running=True
-    fade_alpha=100
+    running = True
+    fade_alpha = 100
 
     while running:
         for event in pygame.event.get():
@@ -102,38 +103,37 @@ def fade():
                 running = False
                 pygame.quit()
                 sys.exit()
-        fade_surface = pygame.Surface((1200,800))
-        fade_surface.fill((0,0,0))
+        fade_surface = pygame.Surface((1200, 800))
+        fade_surface.fill((0, 0, 0))
         fade_surface.set_alpha(fade_alpha)
-        screen.blit(fade_surface,(0,0))
+        screen.blit(fade_surface, (0, 0))
 
-        fade_alpha+=5
-        if fade_alpha>=200:
-            fade_alpha=255
-            running=False
+        fade_alpha += 5
+        if fade_alpha >= 200:
+            fade_alpha = 255
+            running = False
         pygame.display.flip()
 
 
-def settings_menu(screen,play_music,vol):
-
+def settings_menu(screen, play_music, vol):
     normal_mute_button = "menu_pics/playing_mute_button.png"
     muted_mute_button = "menu_pics/muted_button.png"
 
-    if play_music  == 1 or play_music == 2:
+    if play_music == 1 or play_music == 2:
         mute_button = normal_mute_button
         play_music = 2
     else:
         mute_button = muted_mute_button
     back_button = Image_Button(screen_width / 2 - 150 / 2, 500, 150, 74, "menu_pics/button_back.png",
                                "menu_pics/hovered_button_back.png")
-    mute_button=Image_Button(screen_width / 2 - 150 / 2, 50, 150, 74, mute_button,
-                             "menu_pics/hovered_mute_button.png")
-    plus_button=Image_Button(screen_width / 2 - 120 , 150, 100, 74, "menu_pics/plus_button.png",
-                             "menu_pics/plus_button.png")
-    minus_button = Image_Button(screen_width / 2 , 181, 100, 12, "menu_pics/button_of_minus.png",
-                               "menu_pics/button_of_minus.png")
+    mute_button = Image_Button(screen_width / 2 - 150 / 2, 50, 150, 74, mute_button,
+                               "menu_pics/hovered_mute_button.png")
+    plus_button = Image_Button(screen_width / 2 - 120, 150, 100, 74, "menu_pics/plus_button.png",
+                               "menu_pics/plus_button.png")
+    minus_button = Image_Button(screen_width / 2, 181, 100, 12, "menu_pics/button_of_minus.png",
+                                "menu_pics/button_of_minus.png")
 
-    buttons = [back_button,mute_button,plus_button,minus_button]
+    buttons = [back_button, mute_button, plus_button, minus_button]
     my_font = pygame.font.SysFont('Comic Sans MS', 30)
 
     running = True
@@ -143,7 +143,7 @@ def settings_menu(screen,play_music,vol):
         if play_music != 0 and vol > 0.01:
             text = 'Level of Volume ' + str(int(vol * 100)) + " %"
         else:
-            text= "Level of Volume Mute"
+            text = "Level of Volume Mute"
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -153,12 +153,12 @@ def settings_menu(screen,play_music,vol):
                 button.handle_event(event)
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and back_button.is_hovered:
                 fade()
-                main_menu(screen, play_music,vol)
+                main_menu(screen, play_music, vol)
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and mute_button.is_hovered:
                 if play_music:
                     pygame.mixer.music.pause()
                     play_music = 0
-                    text= "Mute"
+                    text = "Mute"
                 else:
                     pygame.mixer.music.unpause()
                     play_music = 2
@@ -170,7 +170,6 @@ def settings_menu(screen,play_music,vol):
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and minus_button.is_hovered:
                 vol -= 0.1
                 pygame.mixer.music.set_volume(vol)
-
 
         text_surface = my_font.render(text, False, (255, 255, 255))
         screen.blit(text_surface, (460, 0))
@@ -187,6 +186,7 @@ def draw_text(surf, text, size, x, y):
     text_rect = text_surface.get_rect()
     text_rect.midtop = (x, y)
     surf.blit(text_surface, text_rect)
+
 
 """"""
 """Функция, отображающая переход между уровнями при поражении одного из игроков"""
@@ -319,7 +319,8 @@ def main():
                                 tanks[1].charges -= 1
                                 timer2 = 0
                                 bullets2.append(objects.Bullet(r_center1[0], r_center1[1],
-                                                               [-v_bullet * np.sin(tanks[1].ang), -v_bullet * np.cos(tanks[1].ang)],
+                                                               [-v_bullet * np.sin(tanks[1].ang),
+                                                                -v_bullet * np.cos(tanks[1].ang)],
                                                                5))
                         elif event.key == pygame.K_SPACE:
                             if tanks[1].bonus == 'TRIPLESHOT':
@@ -327,7 +328,8 @@ def main():
                                 # Тройной выстрел - создаются 2 дополнительные пули под одинаковым углом
                                 # к основному направлению
                                 bullets2.append(objects.Bullet(r_center1[0], r_center1[1],
-                                                               [-v_bullet * np.sin(tanks[1].ang), -v_bullet * np.cos(tanks[1].ang)],
+                                                               [-v_bullet * np.sin(tanks[1].ang),
+                                                                -v_bullet * np.cos(tanks[1].ang)],
                                                                5))
                                 bullets2.append(objects.Bullet(r_center1[0], r_center1[1],
                                                                [-v_bullet * np.sin(tanks[1].ang - 0.25),
@@ -370,13 +372,15 @@ def main():
                                 tanks[0].charges -= 1
                                 timer1 = 0
                                 bullets1.append(objects.Bullet(r_center0[0], r_center0[1],
-                                                               [-v_bullet * np.sin(tanks[0].ang), -v_bullet * np.cos(tanks[0].ang)],
+                                                               [-v_bullet * np.sin(tanks[0].ang),
+                                                                -v_bullet * np.cos(tanks[0].ang)],
                                                                5))
                         elif event.key == pygame.K_q:
                             if tanks[0].bonus == 'TRIPLESHOT':
                                 sound_of_bullet.play()
                                 bullets1.append(objects.Bullet(r_center0[0], r_center0[1],
-                                                               [-v_bullet * np.sin(tanks[0].ang), -v_bullet * np.cos(tanks[0].ang)],
+                                                               [-v_bullet * np.sin(tanks[0].ang),
+                                                                -v_bullet * np.cos(tanks[0].ang)],
                                                                5))
                                 bullets1.append(objects.Bullet(r_center0[0], r_center0[1],
                                                                [-v_bullet * np.sin(tanks[0].ang - 0.25),
@@ -571,7 +575,7 @@ def main():
 
                 # Появление бонуса через равные интервалы времени
                 bonus_timer += 1
-                if bonus_timer % 500 == 0 and len(bonuses) <= 5:
+                if bonus_timer % 1000 == 0 and len(bonuses) <= 5:
                     chance = [0, 0]
                     while field[chance[0]][chance[1]] == 1:
                         chance[0] = random.choice(range(len(field)))
@@ -606,4 +610,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main_menu(screen, play_music,vol)
+    main_menu(screen, play_music, vol)
